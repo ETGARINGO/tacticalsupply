@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #58a6ff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Tactical Glow Animation */
+        .container {
+            border: 2px solid #238636;
+            box-shadow: 0 0 20px rgba(35, 134, 54, 0.5);
+            animation: pulse 2s infinite alternate;
+            padding: 10px;
+            background: rgba(0,0,0,0.8);
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 0 10px #238636; border-color: #238636; }
+            to { box-shadow: 0 0 30px #3fb950; border-color: #3fb950; }
+        }
+
+        h1 {
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #000;
+        }
+
+        iframe {
+            width: 800px;
+            height: 600px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SYSTEM ONLINE: TACTICAL SUPPLY</h1>
+    
+    <div class="container">
+        <iframe src="https://script.google.com/macros/s/AKfycbxzG3WuqpI07KJw93X73RGgWIRp7gRLyUFUQEu6S1DSD9KY2zVxARgpE4jHMKnH6y9rDg/exec"></iframe>
+    </div>
+
+</body>
+</html>
