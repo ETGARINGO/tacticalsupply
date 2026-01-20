@@ -1,92 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TACTICAL SUPPLY INTERFACE</title>
-    <style>
-        :root {
-            --tactical-green: #00ff41;
-            --bg-dark: #0a0a0a;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Embedded Apps Script</title>
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--tactical-green);
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0a192f;
+    }
 
-        /* Animated Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        .header {
-            padding: 20px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            animation: flicker 2s infinite;
-        }
-
-        /* Tactical Container with pulsing border */
-        .frame-container {
-            position: relative;
-            width: 95%;
-            height: 80vh;
-            border: 2px solid var(--tactical-green);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-            background: #000;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            /* Filter to make the Google Script blend with tactical theme */
-            filter: grayscale(1) sepia(1) hue-rotate(90deg) brightness(1.2);
-        }
-
-        @keyframes flicker {
-            0% { opacity: 0.9; }
-            5% { opacity: 0.5; }
-            10% { opacity: 0.9; }
-            100% { opacity: 1; }
-        }
-
-        .footer-status {
-            margin-top: 10px;
-            font-size: 0.8rem;
-        }
-    </style>
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>[ TACTICAL SUPPLY SYSTEM ]</h1>
-    </div>
-
-    <div class="frame-container">
-        <iframe src="https://script.google.com/macros/s/AKfycbxzG3WuqpI07KJw93X73RGgWIRp7gRLyUFUQEu6S1DSD9KY2zVxARgpE4jHMKnH6y9rDg/exec"></iframe>
-    </div>
-
-    <div class="footer-status">
-        STATUS: <span id="clock">ACTIVE</span> | SECURE CONNECTION ESTABLISHED
-    </div>
+  <iframe
+    src="https://script.google.com/macros/s/AKfycbxHQ2iUepJa4TbrNUnbGk0KIjURRKKpHc0t_vp4vKxVhT9x5DLFgQbqOk37xmWsEZoCEg/exec"
+    allowfullscreen>
+  </iframe>
 
 </body>
 </html>
