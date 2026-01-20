@@ -1,32 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
+  <title>Open System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apps Script Embed</title>
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-    iframe {
-      height: 100%;
-      width: 100%;
-      border: none;
-    }
-  </style>
 </head>
-<body>
+<body style="display:flex;justify-content:center;align-items:center;height:100vh">
 
-<iframe
-  src="https://script.google.com/macros/s/AKfycbxHQ2iUepJa4TbrNUnbGk0KIjURRKKpHc0t_vp4vKxVhT9x5DLFgQbqOk37xmWsEZoCEg/exec"
-  loading="lazy"
-  allowfullscreen>
-</iframe>
+<button onclick="openApp()" style="font-size:18px;padding:15px 25px">
+  OPEN SYSTEM
+</button>
+
+<script>
+function openApp() {
+  window.open(
+    "https://script.google.com/macros/s/AKfycbxHQ2iUepJa4TbrNUnbGk0KIjURRKKpHc0t_vp4vKxVhT9x5DLFgQbqOk37xmWsEZoCEg/exec",
+    "_blank"
+  );
+}
+</script>
 
 </body>
 </html>
