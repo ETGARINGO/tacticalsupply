@@ -1,125 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D'TAMANG BIHIS | SECURE ACCESS</title>
     <style>
-        body {
-            background-color: #050505;
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        body, html {
             margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
         }
 
-        /* Lightning Flash Effect */
-        .lightning {
+        /* Lightning Effect */
+        .lightning-flash {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #fff;
             opacity: 0;
-            z-index: -1;
+            z-index: 999;
             pointer-events: none;
         }
 
-        @keyframes flash {
+        @keyframes flash-anim {
             0% { opacity: 0; }
-            10% { opacity: 0.6; }
-            11% { opacity: 0.2; }
-            14% { opacity: 0.7; }
-            20% { opacity: 0; }
+            10% { opacity: 0.8; }
+            15% { opacity: 0.2; }
+            20% { opacity: 0.9; }
+            30% { opacity: 0; }
             100% { opacity: 0; }
         }
 
-        .container {
+        /* Login Screen */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .login-box {
             text-align: center;
-            border: 2px solid #333;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            border: 1px solid #333;
+            padding: 50px;
+            background: rgba(10, 10, 10, 0.9);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
         }
 
         h1 {
-            font-size: 2.5em;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px #fff;
-            margin-bottom: 20px;
+            font-size: 2rem;
+            letter-spacing: 8px;
+            margin-bottom: 30px;
+            color: #eee;
+            text-transform: uppercase;
         }
 
-        input[type="password"] {
-            background: #111;
-            border: 1px solid #444;
-            color: #0f0;
+        input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #444;
+            color: #fff;
+            font-size: 1.2rem;
             padding: 10px;
-            width: 200px;
             text-align: center;
-            font-size: 1.2em;
+            width: 250px;
             outline: none;
+            transition: border-color 0.3s;
         }
+
+        input:focus { border-color: #fff; }
 
         button {
-            background: #222;
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid #fff;
             color: #fff;
-            border: 1px solid #555;
-            padding: 10px 20px;
+            padding: 10px 30px;
             cursor: pointer;
-            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
         }
 
-        button:hover {
-            background: #fff;
-            color: #000;
+        button:hover { background: #fff; color: #000; }
+
+        /* Iframe Container */
+        #content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
         }
 
-        .status { color: #ff3333; margin-top: 10px; font-size: 0.8em; }
+        .hidden { transform: translateY(-100%); }
     </style>
 </head>
-<body onclick="triggerLightning()">
+<body>
 
-    <div class="lightning" id="bolt"></div>
+    <div class="lightning-flash" id="flash"></div>
 
-    <div class="container">
+    <div id="login-overlay">
         <h1>D'TAMANG BIHIS</h1>
-        <p>RESTRICTED ACCESS</p>
-        <input type="password" id="passkey" placeholder="ENTER PASSKEY"><br>
-        <button onclick="checkPass()">ACCESS SYSTEM</button>
-        <div id="status" class="status"></div>
+        <input type="password" id="passkey" placeholder="ENTER PASSKEY" autofocus>
+        <br>
+        <button onclick="unlock()">INITIALIZE ACCESS</button>
     </div>
 
+    <iframe id="content-frame" src=""></iframe>
+
     <script>
-        // Set your passkey here
-        const SECRET = "1234"; 
-        const REDIRECT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
+        const PASS = "1234"; // Set your desired password here
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
         function triggerLightning() {
-            const bolt = document.getElementById('bolt');
-            bolt.style.animation = 'none';
-            bolt.offsetHeight; /* trigger reflow */
-            bolt.style.animation = 'flash 0.5s ease-out';
+            const flash = document.getElementById('flash');
+            flash.style.animation = 'none';
+            void flash.offsetWidth; // trigger reflow
+            flash.style.animation = 'flash-anim 0.6s ease-out';
         }
 
-        // Random lightning every 4-8 seconds
+        // Random lightning while waiting
         setInterval(() => {
-            triggerLightning();
-        }, Math.random() * 4000 + 4000);
+            if(!document.getElementById('login-overlay').classList.contains('hidden')) {
+                triggerLightning();
+            }
+        }, 5000);
 
-        function checkPass() {
+        function unlock() {
             const input = document.getElementById('passkey').value;
-            const status = document.getElementById('status');
-            
-            if(input === SECRET) {
-                status.style.color = "#0f0";
-                status.innerText = "ACCESS GRANTED. REDIRECTING...";
+            if (input === PASS) {
+                triggerLightning();
+                
+                // Load the script into the iframe
+                const frame = document.getElementById('content-frame');
+                frame.src = SCRIPT_URL;
+                frame.style.display = "block";
+
+                // Slide up the login overlay
                 setTimeout(() => {
-                    window.location.href = REDIRECT_URL;
-                }, 1000);
+                    document.getElementById('login-overlay').classList.add('hidden');
+                }, 500);
             } else {
-                status.innerText = "INVALID PASSKEY. ACCESS DENIED.";
-                triggerLightning(); // Flash on error
+                alert("ACCESS DENIED");
+                triggerLightning();
             }
         }
+
+        // Allow 'Enter' key to submit
+        document.getElementById('passkey').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') unlock();
+        });
     </script>
 </body>
 </html>
