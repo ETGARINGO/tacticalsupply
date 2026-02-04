@@ -1,241 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'TAMANG BIHIS | CYBER OVERWATCH</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --pnp-blue: #0033ff;
-            --pnp-red: #ff003c;
-            --cyber-green: #00ff66;
-            --bg: #010206;
-            --map-line: rgba(0, 255, 102, 0.15);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>D'TAMANG BIHIS | CYBER OVERWATCH</title>
 
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            background-color: var(--bg);
-            color: #fff;
-            font-family: 'JetBrains Mono', monospace;
-            overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
 
-        /* --- CYBER MAPPING BACKGROUND --- */
-        .map-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; overflow: hidden; opacity: 0.6;
-        }
+<style>
+:root {
+    --pnp-blue:#0033ff;
+    --pnp-red:#ff003c;
+    --cyber-green:#00ff66;
+    --bg:#010206;
+    --map-line:rgba(0,255,102,.15);
+}
 
-        /* Radar Sweep */
-        .radar-sweep {
-            position: absolute; top: 50%; left: 50%;
-            width: 150vmax; height: 150vmax;
-            background: conic-gradient(from 0deg, transparent 0%, var(--map-line) 2%, transparent 10%);
-            transform: translate(-50%, -50%);
-            animation: sweep 6s linear infinite;
-        }
+*{box-sizing:border-box}
 
-        @keyframes sweep { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+body,html{
+    margin:0;padding:0;height:100%;
+    background:radial-gradient(circle at center,#02040a 0%,#000 70%);
+    color:#fff;font-family:'JetBrains Mono',monospace;
+    overflow:hidden;display:flex;justify-content:center;align-items:center;
+}
 
-        /* Map Grid Circles */
-        .radar-ring {
-            position: absolute; top: 50%; left: 50%;
-            border: 1px solid var(--map-line);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
+/* Background Radar */
+.map-container{position:fixed;inset:0;z-index:0;opacity:.6}
+.radar-sweep{
+    position:absolute;top:50%;left:50%;
+    width:150vmax;height:150vmax;
+    background:conic-gradient(from 0deg,transparent 0%,var(--map-line) 2%,transparent 10%);
+    transform:translate(-50%,-50%);
+    animation:sweep 6s linear infinite;
+}
+@keyframes sweep{to{transform:translate(-50%,-50%) rotate(360deg)}}
 
-        /* Pinging Locations */
-        .ping {
-            position: absolute; width: 8px; height: 8px;
-            background: var(--pnp-red); border-radius: 50%;
-            box-shadow: 0 0 10px var(--pnp-red);
-            animation: pulse 2s ease-out infinite;
-        }
+.radar-ring{
+    position:absolute;top:50%;left:50%;
+    border:1px solid var(--map-line);
+    border-radius:50%;transform:translate(-50%,-50%);
+}
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(4); opacity: 0; }
-        }
+.ping{
+    position:absolute;width:8px;height:8px;
+    background:var(--pnp-red);border-radius:50%;
+    box-shadow:0 0 12px var(--pnp-red);
+    animation:pulse 2s ease-out infinite;
+}
+@keyframes pulse{to{transform:scale(4);opacity:0}}
 
-        /* --- LIGHTNING/EMP EFFECT --- */
-        #lightning {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
-        }
+/* Lightning */
+#lightning{position:fixed;inset:0;background:#fff;opacity:0;z-index:5000;pointer-events:none}
+@keyframes strike{0%{opacity:0}5%{opacity:1}15%{opacity:.8}25%{opacity:0}}
 
-        @keyframes strike {
-            0% { opacity: 0; } 5% { opacity: 1; } 15% { opacity: 0.8; } 25% { opacity: 0; }
-        }
+/* Data Feeds */
+.data-feed{
+    position:fixed;top:20px;font-size:10px;
+    color:var(--cyber-green);z-index:10;text-transform:uppercase;
+}
+.left-feed{left:20px}
+.right-feed{right:20px;text-align:right}
 
-        /* --- SIDE DATA FEEDS --- */
-        .data-feed {
-            position: fixed; top: 20px; font-size: 10px; color: var(--cyber-green);
-            z-index: 10; text-transform: uppercase; line-height: 1.5;
-        }
-        .left-feed { left: 20px; }
-        .right-feed { right: 20px; text-align: right; }
+/* Panel */
+#auth-panel{
+    position:relative;z-index:100;width:95%;max-width:480px;
+    background:rgba(5,7,15,.9);
+    border:1px solid var(--cyber-green);
+    padding:35px;text-align:center;
+    box-shadow:0 0 60px rgba(0,255,102,.15);
+    backdrop-filter:blur(10px);
+}
 
-        /* --- CENTRAL TACTICAL HUD --- */
-        #auth-panel {
-            position: relative; z-index: 100; width: 480px;
-            background: rgba(5, 7, 15, 0.9);
-            border: 1px solid var(--cyber-green);
-            padding: 40px; text-align: center;
-            box-shadow: 0 0 40px rgba(0, 255, 102, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 4px;
-        }
+.profile-container{position:relative;width:180px;margin:auto;border:1px solid var(--cyber-green);padding:4px}
+.profile-img{width:100%;filter:sepia(100%) hue-rotate(90deg) brightness(1.2)}
+.scan-bar{position:absolute;left:0;width:100%;height:2px;background:var(--pnp-red);animation:scan 4s linear infinite}
+@keyframes scan{to{top:100%}}
 
-        /* Profile Area */
-        .profile-container {
-            position: relative; width: 200px; margin: 0 auto;
-            border: 1px solid var(--cyber-green); padding: 5px;
-        }
-        .profile-img {
-            width: 100%; height: auto; display: block;
-            filter: sepia(100%) hue-rotate(90deg) brightness(1.2) contrast(1.1);
-        }
-        .scan-bar {
-            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--pnp-red); box-shadow: 0 0 15px var(--pnp-red);
-            animation: scan 4s linear infinite;
-        }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+.title{
+    font-family:'Orbitron';font-size:1.6rem;
+    font-weight:900;letter-spacing:4px;margin:20px 0 5px;
+    color:var(--cyber-green)
+}
+.system-status{font-size:10px;color:var(--pnp-blue);margin-bottom:20px;border-top:1px solid var(--pnp-blue);padding-top:5px}
 
-        .title {
-            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
-            font-weight: 900; letter-spacing: 4px; margin: 25px 0 5px;
-            color: var(--cyber-green);
-        }
+input{
+    width:85%;background:transparent;border:1px solid var(--cyber-green);
+    padding:14px;color:var(--cyber-green);text-align:center;font-size:1rem;margin-bottom:15px
+}
 
-        .system-status {
-            font-size: 10px; color: var(--pnp-blue); margin-bottom: 25px;
-            border-top: 1px solid var(--pnp-blue); padding-top: 5px;
-        }
+.btn-link{
+    width:90%;padding:16px;background:var(--cyber-green);color:#000;
+    font-family:'Orbitron';font-weight:900;border:none;cursor:pointer;
+    clip-path:polygon(0 0,100% 0,95% 100%,5% 100%);
+    transition:.3s
+}
+.btn-link:hover{background:#fff;box-shadow:0 0 25px #fff;transform:translateY(-2px)}
 
-        /* Interactive Elements */
-        input {
-            width: 85%; background: transparent; border: 1px solid var(--cyber-green);
-            padding: 15px; color: var(--cyber-green); font-family: 'JetBrains Mono';
-            font-size: 1.1rem; text-align: center; outline: none; margin-bottom: 20px;
-        }
+.progress{
+    width:90%;height:8px;border:1px solid var(--cyber-green);
+    margin:10px auto 0;display:none
+}
+.progress-bar{
+    height:100%;width:0;background:var(--cyber-green)
+}
 
-        .btn-link {
-            width: 90%; padding: 18px; background: var(--cyber-green);
-            color: #000; font-family: 'Orbitron'; font-weight: 900;
-            border: none; cursor: pointer; transition: 0.3s;
-            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
-        }
-
-        .btn-link:hover {
-            background: #fff; box-shadow: 0 0 30px #fff;
-            transform: translateY(-2px);
-        }
-
-        #content-frame {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            border: none; display: none; z-index: 6000;
-        }
-
-        .access-granted { animation: exit 1s forwards; }
-        @keyframes exit { to { transform: scale(1.5); opacity: 0; filter: blur(30px); } }
-    </style>
+#content-frame{position:fixed;inset:0;border:none;display:none;z-index:6000}
+.access-granted{animation:exit 1s forwards}
+@keyframes exit{to{transform:scale(1.4);opacity:0;filter:blur(20px)}}
+</style>
 </head>
+
 <body>
 
-    <div id="lightning"></div>
+<div id="lightning"></div>
 
-    <div class="map-container">
-        <div class="radar-sweep"></div>
-        <div class="radar-ring" style="width: 200px; height: 200px;"></div>
-        <div class="radar-ring" style="width: 500px; height: 500px;"></div>
-        <div class="radar-ring" style="width: 800px; height: 800px;"></div>
-        
-        <div class="ping" style="top: 20%; left: 30%;"></div>
-        <div class="ping" style="top: 65%; left: 80%;"></div>
-        <div class="ping" style="top: 40%; left: 15%;"></div>
+<div class="map-container">
+    <div class="radar-sweep"></div>
+    <div class="radar-ring" style="width:200px;height:200px"></div>
+    <div class="radar-ring" style="width:500px;height:500px"></div>
+    <div class="radar-ring" style="width:800px;height:800px"></div>
+    <div class="ping" style="top:20%;left:30%"></div>
+    <div class="ping" style="top:65%;left:80%"></div>
+    <div class="ping" style="top:40%;left:15%"></div>
+</div>
+
+<div class="data-feed left-feed">
+UPLINK: ACTIVE<br>
+COORD: <span id="lat-stream">14.5995</span><br>
+TIME: <span id="clock"></span><br>
+SIGNAL: <span id="signal">98%</span>
+</div>
+
+<div class="data-feed right-feed">
+SYSTEM: PNP_TACTICAL_OS<br>
+USER: AUTHORIZED_ONLY<br>
+TEMP: <span id="temp">24.2°C</span><br>
+THREAT_LVL: <span style="color:var(--pnp-red)">STRICT</span>
+</div>
+
+<div id="auth-panel">
+    <div class="profile-container">
+        <div class="scan-bar"></div>
+        <img src="d, TAMANG BIHIS.png" class="profile-img">
     </div>
 
-    <div class="data-feed left-feed">
-        UPLINK: ACTIVE<br>
-        COORD: <span id="lat-stream">14.5995</span><br>
-        SAT: MNL-OVERWATCH-01<br>
-        SIGNAL: 128-BIT-ENC
-    </div>
-    <div class="data-feed right-feed">
-        SYSTEM: PNP_TACTICAL_OS<br>
-        USER: AUTHORIZED_ONLY<br>
-        THREAT_LVL: <span style="color:var(--pnp-red)">STRICT</span><br>
-        TEMP: 24.2°C
-    </div>
+    <div class="title">D'TAMANG BIHIS</div>
+    <div class="system-status">SECURE LOGISTICS OVERRIDE // PNP-TERMINAL-9X</div>
 
-    <div id="auth-panel">
-        <div class="profile-container">
-            <div class="scan-bar"></div>
-            <img src="d, TAMANG BIHIS.png" alt="ID Profile" class="profile-img">
-        </div>
-        
-        <div class="title">D'TAMANG BIHIS</div>
-        <div class="system-status">SECURE LOGISTICS OVERRIDE // PNP-TERMINAL-9X</div>
+    <input type="password" id="passkey" placeholder="TERMINAL ACCESS KEY">
+    <button class="btn-link" onclick="verify()">INITIALIZE SYNC</button>
 
-        <input type="password" id="passkey" placeholder="TERMINAL ACCESS KEY">
-        
-        <button class="btn-link" onclick="verify()">INITIALIZE SYNC</button>
-        
-        <p id="msg" style="font-size: 0.6rem; color: var(--cyber-green); margin-top: 15px; letter-spacing: 2px;">READY FOR UPLINK...</p>
-    </div>
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
 
-    <iframe id="content-frame" src=""></iframe>
+    <p id="msg" style="font-size:.65rem;color:var(--cyber-green);margin-top:12px;letter-spacing:2px">
+        READY FOR UPLINK...
+    </p>
+</div>
 
-    <script>
-        const SECRET = "WARRIOR";
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
+<iframe id="content-frame"></iframe>
 
-        // Update Live Data
-        setInterval(() => {
-            document.getElementById('lat-stream').innerText = (14.5 + Math.random() * 0.01).toFixed(4);
-        }, 1500);
+<script>
+const SECRET="WARRIOR";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
-        function flash() {
-            const l = document.getElementById('lightning');
-            l.style.animation = 'none';
-            void l.offsetWidth;
-            l.style.animation = 'strike 0.6s ease-out';
-        }
+let attempts=0,locked=false;
 
-        function verify() {
-            const val = document.getElementById('passkey').value.toUpperCase();
-            const msg = document.getElementById('msg');
-            
-            if(val === SECRET) {
-                flash();
-                msg.innerHTML = "SYNC SUCCESSFUL. DEPLOYING INTERFACE...";
-                msg.style.color = "#00ff66";
-                
-                setTimeout(() => {
-                    document.getElementById('auth-panel').classList.add('access-granted');
-                    const frame = document.getElementById('content-frame');
-                    frame.src = SCRIPT_URL;
-                    setTimeout(() => {
-                        frame.style.display = "block";
-                    }, 600);
-                }, 1000);
-            } else {
-                flash();
-                msg.innerHTML = "ERR: UNAUTHORIZED USER DETECTED.";
-                msg.style.color = "#ff003c";
-                document.getElementById('passkey').value = "";
+// Live data
+setInterval(()=>lat-stream.innerText=(14.5+Math.random()*0.01).toFixed(4),1500);
+setInterval(()=>signal.innerText=Math.floor(90+Math.random()*10)+"%",2000);
+setInterval(()=>temp.innerText=(24+Math.random()*2).toFixed(1)+"°C",3000);
+setInterval(()=>clock.innerText=new Date().toLocaleTimeString(),1000);
+
+function flash(){lightning.style.animation='none';void lightning.offsetWidth;lightning.style.animation='strike .6s ease-out'}
+
+function typeMessage(text,color="#00ff66"){
+    msg.style.color=color;
+    msg.innerText="";
+    let i=0;
+    let interval=setInterval(()=>{
+        msg.innerText+=text[i];
+        i++; if(i>=text.length) clearInterval(interval);
+    },25);
+}
+
+function verify(){
+    if(locked) return;
+
+    const val=passkey.value.toUpperCase();
+    if(val===SECRET){
+        flash();
+        typeMessage("ACCESS GRANTED. DECRYPTING INTERFACE...");
+        document.querySelector(".progress").style.display="block";
+
+        let w=0;
+        let load=setInterval(()=>{
+            w+=5; bar.style.width=w+"%";
+            if(w>=100){
+                clearInterval(load);
+                auth-panel.classList.add("access-granted");
+                setTimeout(()=>{
+                    content-frame.src=SCRIPT_URL;
+                    content-frame.style.display="block";
+                },800);
             }
-        }
+        },60);
 
-        document.getElementById('passkey').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verify();
-        });
-    </script>
+    }else{
+        attempts++;
+        flash();
+        typeMessage("ERROR: INVALID KEY.", "#ff003c");
+        passkey.value="";
+        if(attempts>=3){
+            locked=true;
+            typeMessage("TERMINAL LOCKED: 10s COOLDOWN", "#ff003c");
+            let t=10;
+            let cd=setInterval(()=>{
+                typeMessage("TERMINAL LOCKED: "+t+"s","#ff003c");
+                t--;
+                if(t<0){clearInterval(cd);locked=false;attempts=0;typeMessage("READY FOR UPLINK...")}
+            },1000);
+        }
+    }
+}
+
+passkey.addEventListener("keypress",e=>{if(e.key==="Enter")verify()});
+</script>
 </body>
 </html>
