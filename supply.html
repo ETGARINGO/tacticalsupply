@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'TAMANG BIHIS | ELITE OPS</title>
+    <title>D'TAMANG BIHIS | TACTICAL SUPPLY</title>
     <style>
         :root {
-            --accent: #ffffff;
-            --bg: #0a0a0a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --accent: #ff003c; /* Tactical Red */
+            --white: #ffffff;
+            --bg: #050505;
+            --panel: rgba(20, 20, 20, 0.95);
+            --border: rgba(255, 0, 60, 0.3);
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
             background-color: var(--bg);
-            color: var(--accent);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--white);
+            font-family: 'Segoe UI', 'Impact', sans-serif;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Clean Lightning */
+        /* Lightning / EMP Effect */
         #lightning {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -34,157 +35,174 @@
             pointer-events: none;
         }
 
-        @keyframes strike {
+        @keyframes emp-strike {
             0% { opacity: 0; }
-            5% { opacity: 0.2; }
-            10% { opacity: 0; }
-            15% { opacity: 0.5; }
-            25% { opacity: 0; }
+            5% { opacity: 0.4; }
+            7% { opacity: 0.1; }
+            10% { opacity: 0.7; }
+            20% { opacity: 0; }
         }
 
-        /* Main Container */
+        /* Tactical HUD Background */
+        .scanline {
+            position: fixed;
+            top: 0; width: 100%; height: 2px;
+            background: var(--accent);
+            opacity: 0.2;
+            box-shadow: 0 0 10px var(--accent);
+            animation: scan 4s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes scan {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        /* Main Supply Container */
         #auth-panel {
             text-align: center;
             z-index: 10;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100%;
-            max-width: 400px;
+            transition: all 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+            border: 1px solid var(--border);
+            padding: 60px 40px;
+            background: var(--panel);
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
         }
+
+        /* Corner Brackets */
+        #auth-panel::before, #auth-panel::after {
+            content: ""; position: absolute; width: 30px; height: 30px;
+        }
+        #auth-panel::before { top: -2px; left: -2px; border-top: 4px solid var(--accent); border-left: 4px solid var(--accent); }
+        #auth-panel::after { bottom: -2px; right: -2px; border-bottom: 4px solid var(--accent); border-right: 4px solid var(--accent); }
 
         .title {
-            font-size: 1.2rem;
-            font-weight: 200;
-            letter-spacing: 12px;
-            margin-bottom: 40px;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            opacity: 0.8;
+            font-style: italic;
         }
 
-        /* Clean Input Box */
+        .subtitle {
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        /* Industrial Input */
         .input-group {
             position: relative;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            padding: 10px;
-            backdrop-filter: blur(10px);
-            border-radius: 4px;
+            border: 1px solid #333;
+            background: #000;
+            display: flex;
+            align-items: center;
         }
 
         input {
             background: transparent;
             border: none;
-            color: #fff;
-            font-size: 1rem;
+            color: var(--white);
+            font-size: 1.2rem;
             padding: 15px;
-            width: 80%;
+            width: 100%;
             text-align: center;
             outline: none;
-            letter-spacing: 4px;
             font-family: monospace;
+            text-transform: uppercase;
         }
 
         .btn-access {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 12px 30px;
-            margin-top: 30px;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 2px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: 0.4s;
-            opacity: 0.6;
+            transition: 0.2s;
         }
 
         .btn-access:hover {
-            opacity: 1;
-            background: var(--accent);
+            background: #fff;
             color: #000;
+            letter-spacing: 5px;
         }
 
-        /* Iframe Control */
+        /* Frame Transition */
         #content-frame {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             border: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 1.5s ease;
+            display: none;
             z-index: 5;
         }
 
-        /* State Classes */
         .access-granted #auth-panel {
-            transform: scale(1.1);
+            transform: scale(0.8);
             opacity: 0;
-            pointer-events: none;
         }
-        
-        .access-granted #content-frame {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Decor Lines */
-        .line {
-            position: absolute;
-            background: var(--border);
-        }
-        .v-line { width: 1px; height: 100vh; top: 0; }
-        .h-line { height: 1px; width: 100vw; left: 0; }
     </style>
 </head>
 <body>
 
     <div id="lightning"></div>
-
-    <div class="line v-line" style="left: 20%;"></div>
-    <div class="line v-line" style="right: 20%;"></div>
-    <div class="line h-line" style="top: 30%;"></div>
+    <div class="scanline"></div>
 
     <div id="auth-panel">
         <div class="title">D'TAMANG BIHIS</div>
+        <div class="subtitle">Tactical Supply Interface</div>
+        
         <div class="input-group">
-            <input type="password" id="passkey" placeholder="PASSKEY">
+            <input type="password" id="passkey" placeholder="IDENTIFICATION">
         </div>
-        <button class="btn-access" onclick="verify()">Grant Access</button>
+        <button class="btn-access" onclick="verify()">Initialize Access</button>
+        
+        <div style="font-size: 0.5rem; margin-top: 20px; opacity: 0.4; letter-spacing: 1px;">
+            SECURE LINE // [88-294-TAC]
+        </div>
     </div>
 
     <iframe id="content-frame" src=""></iframe>
 
     <script>
-        const KEY = "WARRIOR"; // Clean and simple passkey
+        const KEY = "WARRIOR"; 
         const URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
         function flash() {
             const bolt = document.getElementById('lightning');
             bolt.style.animation = 'none';
             void bolt.offsetWidth;
-            bolt.style.animation = 'strike 0.5s ease-out';
+            bolt.style.animation = 'emp-strike 0.4s ease-out';
         }
-
-        // Occasional subtle flash
-        setInterval(() => {
-            if(!document.body.classList.contains('access-granted')) flash();
-        }, 8000);
 
         function verify() {
             const input = document.getElementById('passkey').value;
             if(input.toUpperCase() === KEY) {
                 flash();
                 document.getElementById('content-frame').src = URL;
+                document.body.classList.add('access-granted');
+                
                 setTimeout(() => {
-                    document.body.classList.add('access-granted');
-                }, 400);
+                    document.getElementById('content-frame').style.display = "block";
+                    document.getElementById('auth-panel').style.display = "none";
+                }, 600);
             } else {
                 flash();
-                document.getElementById('passkey').value = "";
-                document.getElementById('passkey').placeholder = "INVALID";
-                setTimeout(() => {
-                    document.getElementById('passkey').placeholder = "PASSKEY";
-                }, 2000);
+                const p = document.getElementById('passkey');
+                p.value = "";
+                p.placeholder = "DENIED";
+                setTimeout(() => { p.placeholder = "IDENTIFICATION"; }, 1500);
             }
         }
 
