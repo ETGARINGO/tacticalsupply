@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>D'TAMANG BIHIS | ELITE OPS</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Inter:wght@100;300;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --accent: #ffffff;
-            --bg: #0a0a0a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --danger: #ff3b3b;
+            --bg: #050505;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         body, html {
@@ -17,146 +21,181 @@
             width: 100%; height: 100%;
             background-color: var(--bg);
             color: var(--accent);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-main);
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- AMBIENT BACKGROUND --- */
+        #canvas-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 0.4;
         }
 
         /* Clean Lightning */
         #lightning {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff;
-            opacity: 0;
-            z-index: 1000;
-            pointer-events: none;
+            position: fixed; inset: 0; background: #fff; opacity: 0;
+            z-index: 1000; pointer-events: none;
         }
 
         @keyframes strike {
-            0% { opacity: 0; }
-            5% { opacity: 0.2; }
-            10% { opacity: 0; }
-            15% { opacity: 0.5; }
-            25% { opacity: 0; }
-        }
-
-        /* Main Container */
-        #auth-panel {
-            text-align: center;
-            z-index: 10;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .title {
-            font-size: 1.2rem;
-            font-weight: 200;
-            letter-spacing: 12px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            opacity: 0.8;
-        }
-
-        /* Clean Input Box */
-        .input-group {
-            position: relative;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            padding: 10px;
-            backdrop-filter: blur(10px);
-            border-radius: 4px;
-        }
-
-        input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 1rem;
-            padding: 15px;
-            width: 80%;
-            text-align: center;
-            outline: none;
-            letter-spacing: 4px;
-            font-family: monospace;
-        }
-
-        .btn-access {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 12px 30px;
-            margin-top: 30px;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.4s;
-            opacity: 0.6;
-        }
-
-        .btn-access:hover {
-            opacity: 1;
-            background: var(--accent);
-            color: #000;
-        }
-
-        /* Iframe Control */
-        #content-frame {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 1.5s ease;
-            z-index: 5;
-        }
-
-        /* State Classes */
-        .access-granted #auth-panel {
-            transform: scale(1.1);
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .access-granted #content-frame {
-            opacity: 1;
-            visibility: visible;
+            0% { opacity: 0; } 5% { opacity: 0.3; } 10% { opacity: 0; }
+            15% { opacity: 0.1; } 25% { opacity: 0; }
         }
 
         /* Decor Lines */
-        .line {
-            position: absolute;
-            background: var(--border);
-        }
+        .line { position: absolute; background: var(--border); z-index: 2; }
         .v-line { width: 1px; height: 100vh; top: 0; }
         .h-line { height: 1px; width: 100vw; left: 0; }
+
+        /* --- AUTH PANEL --- */
+        #auth-panel {
+            position: relative; text-align: center; z-index: 10;
+            width: 100%; max-width: 440px; padding: 20px;
+            transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .title-container { margin-bottom: 60px; }
+        .title {
+            font-size: 1.5rem; font-weight: 100; letter-spacing: 15px;
+            text-transform: uppercase; margin: 0; opacity: 0.9;
+        }
+        .subtitle {
+            font-family: var(--font-mono); font-size: 0.6rem;
+            letter-spacing: 4px; opacity: 0.4; margin-top: 10px;
+        }
+
+        .input-box {
+            position: relative; background: var(--glass);
+            border: 1px solid var(--border); padding: 5px;
+            backdrop-filter: blur(20px); border-radius: 2px;
+            transition: border 0.3s;
+        }
+        .input-box:focus-within { border-color: var(--accent); }
+
+        input {
+            background: transparent; border: none; color: #fff;
+            font-size: 1.2rem; padding: 20px; width: 100%;
+            text-align: center; outline: none; letter-spacing: 8px;
+            font-family: var(--font-mono); box-sizing: border-box;
+        }
+
+        /* Biometric Trigger */
+        .biometric-area {
+            margin-top: 40px; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .fingerprint-btn {
+            width: 60px; height: 60px; border: 1px solid var(--border);
+            border-radius: 50%; cursor: pointer; position: relative;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .fingerprint-btn::after {
+            content: ''; position: absolute; inset: -5px;
+            border: 1px solid transparent; border-radius: 50%;
+            transition: 0.3s;
+        }
+        .fingerprint-btn:active::after {
+            border-color: var(--accent); transform: scale(1.1);
+            animation: pulse-ring 1.5s infinite;
+        }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        .scan-text {
+            font-size: 0.6rem; letter-spacing: 2px; margin-top: 15px;
+            opacity: 0.4; text-transform: uppercase;
+        }
+
+        /* --- SYSTEM LOG --- */
+        .system-log {
+            position: fixed; bottom: 30px; left: 30px;
+            font-family: var(--font-mono); font-size: 0.6rem;
+            color: var(--accent); opacity: 0.3; text-align: left;
+            line-height: 1.8; pointer-events: none;
+        }
+
+        /* --- IFRAME --- */
+        #content-frame {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            border: none; opacity: 0; visibility: hidden;
+            transition: opacity 2s ease; z-index: 1000; background: #000;
+        }
+
+        /* State Classes */
+        .access-granted #auth-panel { transform: translateY(-50px); opacity: 0; pointer-events: none; }
+        .access-granted #content-frame { opacity: 1; visibility: visible; }
     </style>
 </head>
 <body>
 
     <div id="lightning"></div>
+    <canvas id="canvas-bg"></canvas>
 
-    <div class="line v-line" style="left: 20%;"></div>
-    <div class="line v-line" style="right: 20%;"></div>
-    <div class="line h-line" style="top: 30%;"></div>
+    <div class="line v-line" style="left: 10%;"></div>
+    <div class="line v-line" style="right: 10%;"></div>
+    <div class="line h-line" style="bottom: 15%;"></div>
 
     <div id="auth-panel">
-        <div class="title">D'TAMANG BIHIS</div>
-        <div class="input-group">
-            <input type="password" id="passkey" placeholder="PASSKEY">
+        <div class="title-container">
+            <h1 class="title">D'TAMANG BIHIS</h1>
+            <div class="subtitle">TACTICAL LOGISTICS & ELITE OPS</div>
         </div>
-        <button class="btn-access" onclick="verify()">Grant Access</button>
+
+        <div class="input-box">
+            <input type="password" id="passkey" placeholder="••••••">
+        </div>
+
+        <div class="biometric-area">
+            <div class="fingerprint-btn" id="scan-trigger" onmousedown="startScan()" onmouseup="stopScan()" ontouchstart="startScan()" ontouchend="stopScan()">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+            <div class="scan-text" id="status-msg">Hold to Initialize Sync</div>
+        </div>
+    </div>
+
+    <div class="system-log" id="log">
+        [ SYSTEM ] : KERNEL_IDLE...<br>
+        [ UPLINK ] : SECURE_SIGNAL_WAIT<br>
+        [ LOCATE ] : 14.5995° N, 120.9842° E
     </div>
 
     <iframe id="content-frame" src=""></iframe>
 
     <script>
-        const KEY = "WARRIOR"; // Clean and simple passkey
+        const KEY = "WARRIOR";
         const URL = "https://script.google.com/macros/s/AKfycbww_xFw_NM4w13xOR1Ry4ZbLV94LHwA2mIchxT4pxgM1i_VQVhYyTbJDLkBxCFZ4FDY/exec?v=admin";
+        
+        let scanTimer;
+        let isVerified = false;
+
+        // Particle Background
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<60; i++) particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                v: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 1, 0, Math.PI*2);
+                ctx.fill();
+                p.y -= p.v;
+                if(p.y < 0) p.y = canvas.height;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        initCanvas(); drawParticles();
 
         function flash() {
             const bolt = document.getElementById('lightning');
@@ -165,32 +204,53 @@
             bolt.style.animation = 'strike 0.5s ease-out';
         }
 
-        // Occasional subtle flash
-        setInterval(() => {
-            if(!document.body.classList.contains('access-granted')) flash();
-        }, 8000);
+        function startScan() {
+            const input = document.getElementById('passkey').value.toUpperCase();
+            const msg = document.getElementById('status-msg');
+            
+            if(input !== KEY) {
+                flash();
+                msg.innerText = "ACCESS DENIED";
+                msg.style.color = "var(--danger)";
+                setTimeout(() => { 
+                    msg.innerText = "Hold to Initialize Sync"; 
+                    msg.style.color = "var(--accent)";
+                }, 1000);
+                return;
+            }
 
-        function verify() {
-            const input = document.getElementById('passkey').value;
-            if(input.toUpperCase() === KEY) {
-                flash();
-                document.getElementById('content-frame').src = URL;
-                setTimeout(() => {
-                    document.body.classList.add('access-granted');
-                }, 400);
-            } else {
-                flash();
-                document.getElementById('passkey').value = "";
-                document.getElementById('passkey').placeholder = "INVALID";
-                setTimeout(() => {
-                    document.getElementById('passkey').placeholder = "PASSKEY";
-                }, 2000);
+            msg.innerText = "Scanning Biometrics...";
+            scanTimer = setTimeout(() => {
+                isVerified = true;
+                completeAccess();
+            }, 1500);
+        }
+
+        function stopScan() {
+            clearTimeout(scanTimer);
+            if(!isVerified) {
+                document.getElementById('status-msg').innerText = "Hold to Initialize Sync";
             }
         }
 
-        document.getElementById('passkey').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verify();
-        });
+        function completeAccess() {
+            flash();
+            document.getElementById('status-msg').innerText = "Access Granted";
+            document.getElementById('content-frame').src = URL;
+            setTimeout(() => {
+                document.body.classList.add('access-granted');
+            }, 500);
+        }
+
+        // Random System Log Updates
+        setInterval(() => {
+            const logs = [
+                "[ SYSTEM ] : BUFFER_CLEARED", "[ UPLINK ] : ENCRYPTING_NODE", 
+                "[ STATUS ] : OPS_READY", "[ SENSOR ] : THERMAL_STABLE"
+            ];
+            const logEl = document.getElementById('log');
+            logEl.innerHTML = logs[Math.floor(Math.random()*logs.length)] + "<br>" + logEl.innerHTML.split('<br>').slice(0, 2).join('<br>');
+        }, 4000);
     </script>
 </body>
 </html>
