@@ -1,35 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS System - Full Screen</title>
     <style>
-        /* Reset margins and padding to ensure the iframe fills the space */
-        body, html {
+        body {
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden; /* Prevents double scrollbars */
+            overflow: hidden;
         }
 
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+        /* Lightning Flash Effect */
+        .lightning {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            opacity: 0;
+            z-index: -1;
+            pointer-events: none;
         }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            10% { opacity: 0.6; }
+            11% { opacity: 0.2; }
+            14% { opacity: 0.7; }
+            20% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .container {
+            text-align: center;
+            border: 2px solid #333;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px #fff;
+            margin-bottom: 20px;
+        }
+
+        input[type="password"] {
+            background: #111;
+            border: 1px solid #444;
+            color: #0f0;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+            font-size: 1.2em;
+            outline: none;
+        }
+
+        button {
+            background: #222;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .status { color: #ff3333; margin-top: 10px; font-size: 0.8em; }
     </style>
 </head>
-<body>
+<body onclick="triggerLightning()">
 
-    <iframe 
-        src="https://script.google.com/macros/s/AKfycbwVG8QvIcwqQLvGFGDsiUBbKlh2goovXND4oiuvzYjCgnVhTT9QnEts0m1fQf2rBMW1/exec" 
-        allow="clipboard-read; clipboard-write; geolocation; microphone; camera;">
-    </iframe>
+    <div class="lightning" id="bolt"></div>
 
+    <div class="container">
+        <h1>D'TAMANG BIHIS</h1>
+        <p>RESTRICTED ACCESS</p>
+        <input type="password" id="passkey" placeholder="ENTER PASSKEY"><br>
+        <button onclick="checkPass()">ACCESS SYSTEM</button>
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        // Set your passkey here
+        const SECRET = "1234"; 
+        const REDIRECT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
+
+        function triggerLightning() {
+            const bolt = document.getElementById('bolt');
+            bolt.style.animation = 'none';
+            bolt.offsetHeight; /* trigger reflow */
+            bolt.style.animation = 'flash 0.5s ease-out';
+        }
+
+        // Random lightning every 4-8 seconds
+        setInterval(() => {
+            triggerLightning();
+        }, Math.random() * 4000 + 4000);
+
+        function checkPass() {
+            const input = document.getElementById('passkey').value;
+            const status = document.getElementById('status');
+            
+            if(input === SECRET) {
+                status.style.color = "#0f0";
+                status.innerText = "ACCESS GRANTED. REDIRECTING...";
+                setTimeout(() => {
+                    window.location.href = REDIRECT_URL;
+                }, 1000);
+            } else {
+                status.innerText = "INVALID PASSKEY. ACCESS DENIED.";
+                triggerLightning(); // Flash on error
+            }
+        }
+    </script>
 </body>
 </html>
