@@ -3,228 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'TAMANG BIHIS | OVERLORD TACTICAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
+    <title>WARZONE | D'TAMANG BIHIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pnp-blue: #0033ff;
+            --pnp-blue: #0044ff;
             --pnp-red: #ff003c;
-            --pnp-gold: #ffd700;
-            --cyber-green: #00ff66;
-            --bg: #010206;
+            --radar-green: #00ff66;
+            --terminal-bg: #02040a;
+            --glass: rgba(0, 68, 255, 0.07);
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--bg);
+            background-color: var(--terminal-bg);
             color: #fff;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Share Tech Mono', monospace;
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* --- DYNAMIC BACKGROUND ELEMENTS --- */
-        .vignette {
+        /* --- DYNAMIC RADAR BACKGROUND --- */
+        #radar-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
-            z-index: 2; pointer-events: none;
+            z-index: -1; opacity: 0.4; pointer-events: none;
         }
 
-        .grid-bg {
-            position: fixed; width: 200%; height: 200%;
-            background-image: linear-gradient(rgba(0, 51, 255, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 51, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            transform: perspective(500px) rotateX(60deg) translateY(-10%);
-            animation: moveGrid 15s linear infinite;
-            z-index: 0;
-        }
-
-        @keyframes moveGrid {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
-        }
-
-        /* --- LIGHTNING/EMP EFFECT --- */
-        #lightning {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
-        }
-
-        @keyframes strike {
-            0% { opacity: 0; } 5% { opacity: 1; } 10% { opacity: 0.3; } 15% { opacity: 0.8; } 25% { opacity: 0; }
-        }
-
-        /* --- SIDEBAR SUPPLY REELS (Dynamic) --- */
-        .reel {
-            position: fixed; top: 10%; bottom: 10%; width: 120px;
-            background: rgba(0, 51, 255, 0.03);
-            border: 1px solid rgba(0, 51, 255, 0.1);
-            display: flex; flex-direction: column; justify-content: space-around;
-            align-items: center; z-index: 5;
-        }
-        .left-reel { left: 30px; }
-        .right-reel { right: 30px; }
-
-        .node {
-            width: 70px; height: 70px; border: 1px solid rgba(0, 255, 102, 0.2);
-            font-size: 8px; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; color: var(--cyber-green);
-            background: rgba(0,0,0,0.5); position: relative;
-        }
-        .node span { animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
-
-        /* --- CENTRAL TACTICAL HUD --- */
-        #auth-panel {
-            position: relative; z-index: 100; width: 500px;
-            background: rgba(5, 7, 15, 0.95);
+        .radar-circle {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
             border: 1px solid var(--pnp-blue);
-            padding: 40px; text-align: center;
-            box-shadow: 0 0 50px rgba(0, 51, 255, 0.2);
-            clip-path: polygon(0 10%, 10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%);
+            border-radius: 50%;
         }
 
-        .profile-box {
-            position: relative; width: 220px; margin: 0 auto;
-            border: 1px solid rgba(255,255,255,0.1); padding: 10px;
+        .sweep {
+            position: absolute; top: 50%; left: 50%;
+            width: 40vw; height: 40vw;
+            background: conic-gradient(from 0deg, var(--pnp-blue) 0deg, transparent 90deg);
+            transform-origin: top left;
+            animation: rotate 4s linear infinite;
+            opacity: 0.3;
         }
 
-        .profile-img {
-            width: 100%; height: auto;
-            filter: grayscale(1) contrast(1.2) brightness(1.2);
-            mix-blend-mode: lighten;
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- MAP COORDS LAYER --- */
+        .map-overlay {
+            position: fixed; width: 100%; height: 100%;
+            background-image: radial-gradient(circle, transparent 20%, var(--terminal-bg) 80%);
+            z-index: 1;
         }
 
-        .scan-line {
-            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--cyber-green); box-shadow: 0 0 15px var(--cyber-green);
-            animation: scan 3.5s ease-in-out infinite;
+        .map-spot {
+            position: absolute; width: 10px; height: 10px;
+            background: var(--pnp-red); border-radius: 50%;
+            box-shadow: 0 0 15px var(--pnp-red);
+            animation: pulse-spot 1.5s infinite;
         }
 
-        @keyframes scan { 0%, 100% { top: 0; } 50% { top: 100%; } }
+        @keyframes pulse-spot { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
 
-        /* --- UI ELEMENTS --- */
+        /* --- CENTRAL HUD --- */
+        #auth-panel {
+            position: relative; z-index: 100; width: 550px;
+            background: rgba(1, 3, 10, 0.9);
+            border: 1px solid rgba(0, 68, 255, 0.5);
+            padding: 30px; text-align: center;
+            box-shadow: inset 0 0 30px rgba(0, 68, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Profile Area */
+        .hvt-profile {
+            position: relative; width: 200px; margin: 0 auto 15px;
+            border: 2px solid #fff; padding: 5px; background: #000;
+        }
+        .hvt-profile img {
+            width: 100%; display: block; filter: contrast(1.1) brightness(1.1);
+        }
+        .hvt-label {
+            position: absolute; top: -10px; left: -10px;
+            background: var(--pnp-red); color: white; font-size: 10px;
+            padding: 2px 8px; font-weight: bold;
+        }
+
+        /* Diagnostic Grid */
+        .diag-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;
+        }
+        .diag-box {
+            border: 1px solid var(--pnp-blue); padding: 5px; font-size: 9px;
+            text-align: left; background: var(--glass);
+        }
+        .diag-box b { color: var(--pnp-blue); display: block; margin-bottom: 2px; }
+
         .title {
-            font-family: 'Orbitron', sans-serif; font-size: 2rem;
-            font-weight: 900; letter-spacing: 5px; margin: 20px 0 5px;
-            color: #fff; text-shadow: 0 0 10px var(--pnp-blue);
+            font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900;
+            letter-spacing: 8px; margin: 10px 0; color: #fff;
+            text-shadow: 0 0 15px var(--pnp-blue);
         }
 
-        .coord-display {
-            font-size: 9px; color: var(--pnp-blue); margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-
+        /* Controls */
+        .input-area { margin: 25px 0; }
         input {
-            width: 80%; background: #000; border: none;
-            border-left: 3px solid var(--pnp-red);
-            padding: 15px; color: #fff; font-family: 'JetBrains Mono';
-            font-size: 1.1rem; outline: none; margin-bottom: 20px;
+            width: 70%; background: transparent; border: 1px solid var(--pnp-blue);
+            padding: 12px; color: #fff; text-align: center; font-size: 1.2rem;
+            letter-spacing: 5px; outline: none; transition: 0.3s;
         }
+        input:focus { border-color: var(--radar-green); box-shadow: 0 0 10px var(--radar-green); }
 
-        .btn-action {
-            width: 85%; padding: 18px; background: var(--pnp-blue);
-            color: #fff; font-family: 'Orbitron'; font-weight: bold;
-            border: none; cursor: pointer; transition: 0.3s;
-            clip-path: polygon(0% 0%, 100% 0%, 95% 100%, 5% 100%);
+        .btn-strike {
+            width: 75%; padding: 15px; background: var(--pnp-blue); color: white;
+            border: none; font-family: 'Orbitron'; font-weight: bold;
+            cursor: pointer; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+            transition: 0.3s;
         }
-
-        .btn-action:hover {
-            background: var(--pnp-red); letter-spacing: 4px;
-            box-shadow: 0 0 20px var(--pnp-red);
-        }
+        .btn-strike:hover { background: var(--radar-green); color: #000; box-shadow: 0 0 20px var(--radar-green); }
 
         #content-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            border: none; display: none; z-index: 6000;
+            border: none; display: none; z-index: 1000;
         }
 
-        .access-granted { animation: exit 0.8s forwards; }
-        @keyframes exit { to { transform: scale(2); opacity: 0; filter: blur(20px); } }
+        /* --- SCANLINE EFFECT --- */
+        body::after {
+            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%; z-index: 500; pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-    <div id="lightning"></div>
-    <div class="vignette"></div>
-    <div class="grid-bg"></div>
-
-    <div class="reel left-reel">
-        <div class="node"><span>BODY ARMOR</span><br>L-IV</div>
-        <div class="node"><span>HELMET</span><br>NVG-7</div>
-        <div class="node"><span>COMMS</span><br>FREQ: 44.2</div>
-    </div>
-
-    <div class="reel right-reel">
-        <div class="node"><span>GPS</span><br><div id="lat-val">14.59</div></div>
-        <div class="node"><span>STATUS</span><br><div style="color:red">RED-OPS</div></div>
-        <div class="node"><span>BATT</span><br>94%</div>
+    <div class="map-overlay"></div>
+    <div id="radar-container">
+        <div class="sweep"></div>
+        <div class="radar-circle" style="width: 200px; height: 200px;"></div>
+        <div class="radar-circle" style="width: 400px; height: 400px;"></div>
+        <div class="radar-circle" style="width: 600px; height: 600px;"></div>
+        <div class="map-spot" style="top:30%; left:20%;"></div>
+        <div class="map-spot" style="top:70%; left:80%;"></div>
+        <div class="map-spot" style="top:45%; left:65%;"></div>
     </div>
 
     <div id="auth-panel">
-        <div class="profile-box">
-            <div class="scan-line"></div>
-            <img src="d, TAMANG BIHIS.png" alt="Tactical ID" class="profile-img">
+        <div class="hvt-profile">
+            <div class="hvt-label">HVT-ACTIVE</div>
+            <img src="d, TAMANG BIHIS.png" alt="Tactical Target">
         </div>
         
         <div class="title">D'TAMANG BIHIS</div>
-        <div class="coord-display">SECURE TERMINAL // REF: 88-294-TAC</div>
+        
+        <div class="diag-grid">
+            <div class="diag-box"><b>LOCATION</b><span id="coord-lat">14.5995</span>N</div>
+            <div class="diag-box"><b>ALTITUDE</b><span id="alt-val">124</span>M</div>
+            <div class="diag-box"><b>SIGNAL</b><span style="color:var(--radar-green)">SECURE</span></div>
+        </div>
 
-        <input type="password" id="passkey" placeholder="INPUT ACCESS KEY">
+        <div class="input-area">
+            <input type="password" id="passkey" placeholder="PASSKEY">
+        </div>
         
-        <button class="btn-action" onclick="verify()">ESTABLISH UPLINK</button>
-        
-        <p id="msg" style="font-size: 0.6rem; color: var(--cyber-green); margin-top: 15px; letter-spacing: 1px;">AWAITING COMMAND...</p>
+        <button class="btn-strike" onclick="initiate()">CONFIRM IDENTITY</button>
+        <p id="status-text" style="font-size: 10px; margin-top: 15px; color: var(--pnp-blue);">READY FOR COMMAND UPLINK...</p>
     </div>
 
     <iframe id="content-frame" src=""></iframe>
 
     <script>
-        const SECRET = "WARRIOR";
+        const ACCESS_KEY = "WARRIOR";
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
-        // Dynamic Coordinate Update
+        // Dynamic Telemetry
         setInterval(() => {
-            document.getElementById('lat-val').innerText = (14.5 + Math.random() * 0.1).toFixed(4);
+            document.getElementById('coord-lat').innerText = (14.5 + Math.random() * 0.01).toFixed(4);
+            document.getElementById('alt-val').innerText = Math.floor(120 + Math.random() * 10);
         }, 2000);
 
-        function flash() {
-            const l = document.getElementById('lightning');
-            l.style.animation = 'none';
-            void l.offsetWidth;
-            l.style.animation = 'strike 0.5s ease-out';
-        }
-
-        function verify() {
-            const val = document.getElementById('passkey').value.toUpperCase();
-            const msg = document.getElementById('msg');
+        function initiate() {
+            const input = document.getElementById('passkey').value.toUpperCase();
+            const status = document.getElementById('status-text');
             
-            if(val === SECRET) {
-                flash();
-                msg.innerHTML = "ACCESS GRANTED. BYPASSING FIREWALL...";
-                msg.style.color = "#00ff66";
+            if(input === ACCESS_KEY) {
+                status.innerText = "IDENTITY CONFIRMED. REDIRECTING...";
+                status.style.color = "#00ff66";
+                document.getElementById('auth-panel').style.opacity = "0.3";
                 
                 setTimeout(() => {
-                    document.getElementById('auth-panel').classList.add('access-granted');
+                    document.getElementById('auth-panel').style.display = "none";
                     const frame = document.getElementById('content-frame');
                     frame.src = SCRIPT_URL;
-                    setTimeout(() => {
-                        frame.style.display = "block";
-                    }, 500);
+                    frame.style.display = "block";
                 }, 1000);
             } else {
-                flash();
-                msg.innerHTML = "SYSTEM ERROR: INVALID CREDENTIALS.";
-                msg.style.color = "#ff003c";
+                status.innerText = "ACCESS DENIED. WRONG PASSKEY.";
+                status.style.color = "#ff003c";
                 document.getElementById('passkey').value = "";
             }
         }
 
-        document.getElementById('passkey').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verify();
-        });
+        document.getElementById('passkey').addEventListener('keypress', (e) => { if (e.key === 'Enter') initiate(); });
     </script>
 </body>
 </html>
