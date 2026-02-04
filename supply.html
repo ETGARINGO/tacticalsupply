@@ -3,193 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'TAMANG BIHIS | CYBER OPS</title>
+    <title>D'TAMANG BIHIS | ELITE OPS</title>
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-red: #ff003c;
-            --terminal-green: #0f0;
+            --accent: #ffffff;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: #050505;
-            color: var(--neon-blue);
-            font-family: 'Courier New', monospace;
+            background-color: var(--bg);
+            color: var(--accent);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Scanline Effect */
-        body::before {
-            content: " ";
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        /* Lightning Flash */
-        .lightning {
+        /* Clean Lightning */
+        #lightning {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #fff;
             opacity: 0;
-            z-index: 2000;
+            z-index: 1000;
             pointer-events: none;
         }
 
-        @keyframes thunder {
+        @keyframes strike {
             0% { opacity: 0; }
-            10% { opacity: 0.8; }
-            12% { opacity: 0.1; }
-            15% { opacity: 1; }
-            30% { opacity: 0; }
+            5% { opacity: 0.2; }
+            10% { opacity: 0; }
+            15% { opacity: 0.5; }
+            25% { opacity: 0; }
         }
 
-        /* Terminal UI */
-        #gatekeeper {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-shadow: 0 0 10px var(--neon-blue);
-            transition: opacity 1s, transform 1s;
+        /* Main Container */
+        #auth-panel {
+            text-align: center;
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            max-width: 400px;
         }
 
-        .glitch-title {
-            font-size: 3rem;
-            font-weight: bold;
-            position: relative;
+        .title {
+            font-size: 1.2rem;
+            font-weight: 200;
+            letter-spacing: 12px;
+            margin-bottom: 40px;
             text-transform: uppercase;
-            letter-spacing: 10px;
+            opacity: 0.8;
         }
 
-        .hud-box {
-            border: 1px solid var(--neon-blue);
-            padding: 30px;
-            background: rgba(0, 20, 40, 0.3);
-            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.2);
+        /* Clean Input Box */
+        .input-group {
             position: relative;
-        }
-
-        .hud-box::before { /* Corner Accents */
-            content: ""; position: absolute; top: -5px; left: -5px;
-            width: 20px; height: 20px; border-top: 3px solid var(--neon-blue); border-left: 3px solid var(--neon-blue);
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 10px;
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
         }
 
         input {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1rem;
             padding: 15px;
-            font-size: 1.2rem;
-            width: 300px;
+            width: 80%;
             text-align: center;
-            margin-top: 20px;
             outline: none;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+            letter-spacing: 4px;
+            font-family: monospace;
         }
 
         .btn-access {
-            background: var(--neon-blue);
-            color: #000;
-            border: none;
-            padding: 15px 40px;
-            margin-top: 20px;
-            font-weight: bold;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 30px;
+            margin-top: 30px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
             cursor: pointer;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            transition: 0.3s;
+            transition: 0.4s;
+            opacity: 0.6;
         }
 
         .btn-access:hover {
-            background: #fff;
-            box-shadow: 0 0 20px #fff;
+            opacity: 1;
+            background: var(--accent);
+            color: #000;
         }
 
-        /* Full-screen Iframe */
-        #secure-frame {
+        /* Iframe Control */
+        #content-frame {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             border: none;
-            display: none;
-            z-index: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease;
+            z-index: 5;
         }
 
-        .hidden {
-            transform: scale(1.5);
+        /* State Classes */
+        .access-granted #auth-panel {
+            transform: scale(1.1);
             opacity: 0;
             pointer-events: none;
         }
+        
+        .access-granted #content-frame {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Decor Lines */
+        .line {
+            position: absolute;
+            background: var(--border);
+        }
+        .v-line { width: 1px; height: 100vh; top: 0; }
+        .h-line { height: 1px; width: 100vw; left: 0; }
     </style>
 </head>
 <body>
 
-    <div class="lightning" id="lightning"></div>
+    <div id="lightning"></div>
 
-    <div id="gatekeeper">
-        <div class="glitch-title">D'TAMANG BIHIS</div>
-        <p style="letter-spacing: 5px;">WARRIOR IDENTIFICATION REQUIRED</p>
-        
-        <div class="hud-box">
-            <input type="password" id="passkey" placeholder="[ ENTER PASSKEY ]">
-            <br>
-            <button class="btn-access" onclick="authenticate()">INITIALIZE LINK</button>
+    <div class="line v-line" style="left: 20%;"></div>
+    <div class="line v-line" style="right: 20%;"></div>
+    <div class="line h-line" style="top: 30%;"></div>
+
+    <div id="auth-panel">
+        <div class="title">D'TAMANG BIHIS</div>
+        <div class="input-group">
+            <input type="password" id="passkey" placeholder="PASSKEY">
         </div>
-        <p id="status-text" style="margin-top: 20px; font-size: 0.8rem; color: var(--neon-red);"></p>
+        <button class="btn-access" onclick="verify()">Grant Access</button>
     </div>
 
-    <iframe id="secure-frame" src=""></iframe>
+    <iframe id="content-frame" src=""></iframe>
 
     <script>
-        const ACCESS_KEY = "SOLDIER77"; // Change this to your passkey
-        const TARGET_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
+        const KEY = "WARRIOR"; // Clean and simple passkey
+        const URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
-        function strike() {
-            const l = document.getElementById('lightning');
-            l.style.animation = 'none';
-            void l.offsetWidth; 
-            l.style.animation = 'thunder 0.4s linear';
+        function flash() {
+            const bolt = document.getElementById('lightning');
+            bolt.style.animation = 'none';
+            void bolt.offsetWidth;
+            bolt.style.animation = 'strike 0.5s ease-out';
         }
 
-        // Random lightning strike every 6 seconds
+        // Occasional subtle flash
         setInterval(() => {
-            if(!document.getElementById('gatekeeper').classList.contains('hidden')) strike();
-        }, 6000);
+            if(!document.body.classList.contains('access-granted')) flash();
+        }, 8000);
 
-        function authenticate() {
-            const val = document.getElementById('passkey').value;
-            const status = document.getElementById('status-text');
-
-            if(val === ACCESS_KEY) {
-                strike();
-                status.style.color = "var(--terminal-green)";
-                status.innerText = "IDENTITY CONFIRMED. DEPLOYING INTERFACE...";
-                
-                // Load Iframe
-                const frame = document.getElementById('secure-frame');
-                frame.src = TARGET_URL;
-                
+        function verify() {
+            const input = document.getElementById('passkey').value;
+            if(input.toUpperCase() === KEY) {
+                flash();
+                document.getElementById('content-frame').src = URL;
                 setTimeout(() => {
-                    document.getElementById('gatekeeper').classList.add('hidden');
-                    frame.style.display = "block";
-                }, 1000);
+                    document.body.classList.add('access-granted');
+                }, 400);
             } else {
-                strike();
-                status.innerText = "ERROR: UNAUTHORIZED BIO-SIGNATURE";
+                flash();
                 document.getElementById('passkey').value = "";
+                document.getElementById('passkey').placeholder = "INVALID";
+                setTimeout(() => {
+                    document.getElementById('passkey').placeholder = "PASSKEY";
+                }, 2000);
             }
         }
 
-        // Enter key support
         document.getElementById('passkey').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') authenticate();
+            if (e.key === 'Enter') verify();
         });
     </script>
 </body>
