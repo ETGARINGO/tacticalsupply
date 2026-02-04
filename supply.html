@@ -1,230 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>D'TAMANG BIHIS | CYBER OVERWATCH</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D'TAMANG BIHIS | CYBER OVERWATCH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pnp-blue: #0033ff;
+            --pnp-red: #ff003c;
+            --cyber-green: #00ff66;
+            --bg: #010206;
+            --map-line: rgba(0, 255, 102, 0.15);
+            --glow: 0 0 15px var(--cyber-green);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
 
-<style>
-:root {
-    --pnp-blue:#0033ff;
-    --pnp-red:#ff003c;
-    --cyber-green:#00ff66;
-    --bg:#010206;
-    --map-line:rgba(0,255,102,.15);
-}
+        /* CRT Scanline Overlay */
+        body::before {
+            content: " ";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none; z-index: 1000;
+        }
 
-*{box-sizing:border-box}
+        /* --- MAP & RADAR --- */
+        .map-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; overflow: hidden; opacity: 0.4;
+        }
 
-body,html{
-    margin:0;padding:0;height:100%;
-    background:radial-gradient(circle at center,#02040a 0%,#000 70%);
-    color:#fff;font-family:'JetBrains Mono',monospace;
-    overflow:hidden;display:flex;justify-content:center;align-items:center;
-}
+        .radar-sweep {
+            position: absolute; top: 50%; left: 50%;
+            width: 150vmax; height: 150vmax;
+            background: conic-gradient(from 0deg, transparent 0%, var(--cyber-green) 1%, transparent 10%);
+            transform: translate(-50%, -50%);
+            animation: sweep 8s linear infinite;
+        }
 
-/* Background Radar */
-.map-container{position:fixed;inset:0;z-index:0;opacity:.6}
-.radar-sweep{
-    position:absolute;top:50%;left:50%;
-    width:150vmax;height:150vmax;
-    background:conic-gradient(from 0deg,transparent 0%,var(--map-line) 2%,transparent 10%);
-    transform:translate(-50%,-50%);
-    animation:sweep 6s linear infinite;
-}
-@keyframes sweep{to{transform:translate(-50%,-50%) rotate(360deg)}}
+        @keyframes sweep { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-.radar-ring{
-    position:absolute;top:50%;left:50%;
-    border:1px solid var(--map-line);
-    border-radius:50%;transform:translate(-50%,-50%);
-}
+        /* --- AUTH PANEL --- */
+        #auth-panel {
+            position: relative; z-index: 100; width: 420px;
+            background: rgba(2, 5, 12, 0.95);
+            border: 1px solid var(--cyber-green);
+            padding: 40px; text-align: center;
+            box-shadow: 0 0 50px rgba(0, 255, 102, 0.05), inset 0 0 20px rgba(0, 255, 102, 0.05);
+            border-radius: 2px;
+        }
 
-.ping{
-    position:absolute;width:8px;height:8px;
-    background:var(--pnp-red);border-radius:50%;
-    box-shadow:0 0 12px var(--pnp-red);
-    animation:pulse 2s ease-out infinite;
-}
-@keyframes pulse{to{transform:scale(4);opacity:0}}
+        /* Glitch Title */
+        .title {
+            font-family: 'Orbitron', sans-serif; font-size: 2rem;
+            font-weight: 900; letter-spacing: 5px; margin: 25px 0 5px;
+            color: var(--cyber-green);
+            text-shadow: 2px 2px var(--pnp-red);
+            animation: glitch 3s infinite;
+        }
 
-/* Lightning */
-#lightning{position:fixed;inset:0;background:#fff;opacity:0;z-index:5000;pointer-events:none}
-@keyframes strike{0%{opacity:0}5%{opacity:1}15%{opacity:.8}25%{opacity:0}}
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px var(--pnp-red); }
+            2% { text-shadow: -3px -2px var(--pnp-blue), 3px 2px var(--pnp-red); }
+            4% { text-shadow: 0 0 transparent; }
+            100% { text-shadow: 2px 2px var(--pnp-red); }
+        }
 
-/* Data Feeds */
-.data-feed{
-    position:fixed;top:20px;font-size:10px;
-    color:var(--cyber-green);z-index:10;text-transform:uppercase;
-}
-.left-feed{left:20px}
-.right-feed{right:20px;text-align:right}
+        /* Inputs & Buttons */
+        input {
+            width: 100%; background: rgba(0, 255, 102, 0.05); border: 1px solid var(--cyber-green);
+            padding: 15px; color: var(--cyber-green); font-family: 'JetBrains Mono';
+            box-sizing: border-box; font-size: 1rem; text-align: center; outline: none; margin-bottom: 20px;
+            transition: all 0.3s;
+        }
 
-/* Panel */
-#auth-panel{
-    position:relative;z-index:100;width:95%;max-width:480px;
-    background:rgba(5,7,15,.9);
-    border:1px solid var(--cyber-green);
-    padding:35px;text-align:center;
-    box-shadow:0 0 60px rgba(0,255,102,.15);
-    backdrop-filter:blur(10px);
-}
+        input:focus { box-shadow: 0 0 15px var(--cyber-green); background: rgba(0, 255, 102, 0.1); }
 
-.profile-container{position:relative;width:180px;margin:auto;border:1px solid var(--cyber-green);padding:4px}
-.profile-img{width:100%;filter:sepia(100%) hue-rotate(90deg) brightness(1.2)}
-.scan-bar{position:absolute;left:0;width:100%;height:2px;background:var(--pnp-red);animation:scan 4s linear infinite}
-@keyframes scan{to{top:100%}}
+        .btn-link {
+            width: 100%; padding: 18px; background: var(--cyber-green);
+            color: #000; font-family: 'Orbitron'; font-weight: 900;
+            border: none; cursor: pointer; transition: 0.4s;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+        }
 
-.title{
-    font-family:'Orbitron';font-size:1.6rem;
-    font-weight:900;letter-spacing:4px;margin:20px 0 5px;
-    color:var(--cyber-green)
-}
-.system-status{font-size:10px;color:var(--pnp-blue);margin-bottom:20px;border-top:1px solid var(--pnp-blue);padding-top:5px}
+        .btn-link:hover {
+            background: #fff; box-shadow: 0 0 30px #fff;
+            transform: scale(1.05);
+        }
 
-input{
-    width:85%;background:transparent;border:1px solid var(--cyber-green);
-    padding:14px;color:var(--cyber-green);text-align:center;font-size:1rem;margin-bottom:15px
-}
+        /* Bottom Live Log */
+        .terminal-log {
+            position: fixed; bottom: 20px; left: 20px; width: 300px;
+            height: 80px; font-size: 9px; color: var(--cyber-green);
+            overflow: hidden; opacity: 0.7; border-left: 2px solid var(--cyber-green);
+            padding-left: 10px;
+        }
 
-.btn-link{
-    width:90%;padding:16px;background:var(--cyber-green);color:#000;
-    font-family:'Orbitron';font-weight:900;border:none;cursor:pointer;
-    clip-path:polygon(0 0,100% 0,95% 100%,5% 100%);
-    transition:.3s
-}
-.btn-link:hover{background:#fff;box-shadow:0 0 25px #fff;transform:translateY(-2px)}
+        /* Functional UI */
+        #lightning {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
+        }
 
-.progress{
-    width:90%;height:8px;border:1px solid var(--cyber-green);
-    margin:10px auto 0;display:none
-}
-.progress-bar{
-    height:100%;width:0;background:var(--cyber-green)
-}
-
-#content-frame{position:fixed;inset:0;border:none;display:none;z-index:6000}
-.access-granted{animation:exit 1s forwards}
-@keyframes exit{to{transform:scale(1.4);opacity:0;filter:blur(20px)}}
-</style>
+        @keyframes strike { 0% { opacity: 0; } 10% { opacity: 0.8; } 100% { opacity: 0; } }
+    </style>
 </head>
-
 <body>
 
-<div id="lightning"></div>
+    <div id="lightning"></div>
 
-<div class="map-container">
-    <div class="radar-sweep"></div>
-    <div class="radar-ring" style="width:200px;height:200px"></div>
-    <div class="radar-ring" style="width:500px;height:500px"></div>
-    <div class="radar-ring" style="width:800px;height:800px"></div>
-    <div class="ping" style="top:20%;left:30%"></div>
-    <div class="ping" style="top:65%;left:80%"></div>
-    <div class="ping" style="top:40%;left:15%"></div>
-</div>
-
-<div class="data-feed left-feed">
-UPLINK: ACTIVE<br>
-COORD: <span id="lat-stream">14.5995</span><br>
-TIME: <span id="clock"></span><br>
-SIGNAL: <span id="signal">98%</span>
-</div>
-
-<div class="data-feed right-feed">
-SYSTEM: PNP_TACTICAL_OS<br>
-USER: AUTHORIZED_ONLY<br>
-TEMP: <span id="temp">24.2°C</span><br>
-THREAT_LVL: <span style="color:var(--pnp-red)">STRICT</span>
-</div>
-
-<div id="auth-panel">
-    <div class="profile-container">
-        <div class="scan-bar"></div>
-        <img src="d, TAMANG BIHIS.png" class="profile-img">
+    <div class="map-container">
+        <div class="radar-sweep"></div>
+        <div class="ping" style="top: 30%; left: 40%;"></div>
+        <div class="ping" style="top: 70%; left: 60%;"></div>
     </div>
 
-    <div class="title">D'TAMANG BIHIS</div>
-    <div class="system-status">SECURE LOGISTICS OVERRIDE // PNP-TERMINAL-9X</div>
+    <div class="terminal-log" id="log">
+        > INITIALIZING BOOT_SEQ...<br>
+        > KERNEL: OK<br>
+        > NETWORK: SECURE<br>
+    </div>
 
-    <input type="password" id="passkey" placeholder="TERMINAL ACCESS KEY">
-    <button class="btn-link" onclick="verify()">INITIALIZE SYNC</button>
-
-    <div class="progress"><div class="progress-bar" id="bar"></div></div>
-
-    <p id="msg" style="font-size:.65rem;color:var(--cyber-green);margin-top:12px;letter-spacing:2px">
-        READY FOR UPLINK...
-    </p>
-</div>
-
-<iframe id="content-frame"></iframe>
-
-<script>
-const SECRET="WARRIOR";
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
-
-let attempts=0,locked=false;
-
-// Live data
-setInterval(()=>lat-stream.innerText=(14.5+Math.random()*0.01).toFixed(4),1500);
-setInterval(()=>signal.innerText=Math.floor(90+Math.random()*10)+"%",2000);
-setInterval(()=>temp.innerText=(24+Math.random()*2).toFixed(1)+"°C",3000);
-setInterval(()=>clock.innerText=new Date().toLocaleTimeString(),1000);
-
-function flash(){lightning.style.animation='none';void lightning.offsetWidth;lightning.style.animation='strike .6s ease-out'}
-
-function typeMessage(text,color="#00ff66"){
-    msg.style.color=color;
-    msg.innerText="";
-    let i=0;
-    let interval=setInterval(()=>{
-        msg.innerText+=text[i];
-        i++; if(i>=text.length) clearInterval(interval);
-    },25);
-}
-
-function verify(){
-    if(locked) return;
-
-    const val=passkey.value.toUpperCase();
-    if(val===SECRET){
-        flash();
-        typeMessage("ACCESS GRANTED. DECRYPTING INTERFACE...");
-        document.querySelector(".progress").style.display="block";
-
-        let w=0;
-        let load=setInterval(()=>{
-            w+=5; bar.style.width=w+"%";
-            if(w>=100){
-                clearInterval(load);
-                auth-panel.classList.add("access-granted");
-                setTimeout(()=>{
-                    content-frame.src=SCRIPT_URL;
-                    content-frame.style.display="block";
-                },800);
-            }
-        },60);
-
-    }else{
-        attempts++;
-        flash();
-        typeMessage("ERROR: INVALID KEY.", "#ff003c");
-        passkey.value="";
-        if(attempts>=3){
-            locked=true;
-            typeMessage("TERMINAL LOCKED: 10s COOLDOWN", "#ff003c");
-            let t=10;
-            let cd=setInterval(()=>{
-                typeMessage("TERMINAL LOCKED: "+t+"s","#ff003c");
-                t--;
-                if(t<0){clearInterval(cd);locked=false;attempts=0;typeMessage("READY FOR UPLINK...")}
-            },1000);
-        }
-    }
-}
-
-passkey.addEventListener("keypress",e=>{if(e.key==="Enter")verify()});
-</script>
-</body>
-</html>
+    <div id="auth-panel">
+        <div style="border: 1px solid var(--cyber-
