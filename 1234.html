@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D'TAMANG BIHIS | ELITE OPS</title>
+    <style>
+        :root {
+            --accent: #ffffff;
+            --bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg);
+            color: var(--accent);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Clean Lightning */
+        #lightning {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            opacity: 0;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes strike {
+            0% { opacity: 0; }
+            5% { opacity: 0.2; }
+            10% { opacity: 0; }
+            15% { opacity: 0.5; }
+            25% { opacity: 0; }
+        }
+
+        /* Main Container */
+        #auth-panel {
+            text-align: center;
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 200;
+            letter-spacing: 12px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* Clean Input Box */
+        .input-group {
+            position: relative;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 10px;
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1rem;
+            padding: 15px;
+            width: 80%;
+            text-align: center;
+            outline: none;
+            letter-spacing: 4px;
+            font-family: monospace;
+        }
+
+        .btn-access {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 30px;
+            margin-top: 30px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.4s;
+            opacity: 0.6;
+        }
+
+        .btn-access:hover {
+            opacity: 1;
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* Iframe Control */
+        #content-frame {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease;
+            z-index: 5;
+        }
+
+        /* State Classes */
+        .access-granted #auth-panel {
+            transform: scale(1.1);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .access-granted #content-frame {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Decor Lines */
+        .line {
+            position: absolute;
+            background: var(--border);
+        }
+        .v-line { width: 1px; height: 100vh; top: 0; }
+        .h-line { height: 1px; width: 100vw; left: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="lightning"></div>
+
+    <div class="line v-line" style="left: 20%;"></div>
+    <div class="line v-line" style="right: 20%;"></div>
+    <div class="line h-line" style="top: 30%;"></div>
+
+    <div id="auth-panel">
+        <div class="title">D'TAMANG BIHIS</div>
+        <div class="input-group">
+            <input type="password" id="passkey" placeholder="PASSKEY">
+        </div>
+        <button class="btn-access" onclick="verify()">Grant Access</button>
+    </div>
+
+    <iframe id="content-frame" src=""></iframe>
+
+    <script>
+        const KEY = "WARRIOR"; // Clean and simple passkey
+        const URL = "https://script.google.com/macros/s/AKfycbww_xFw_NM4w13xOR1Ry4ZbLV94LHwA2mIchxT4pxgM1i_VQVhYyTbJDLkBxCFZ4FDY/exec?v=admin";
+
+        function flash() {
+            const bolt = document.getElementById('lightning');
+            bolt.style.animation = 'none';
+            void bolt.offsetWidth;
+            bolt.style.animation = 'strike 0.5s ease-out';
+        }
+
+        // Occasional subtle flash
+        setInterval(() => {
+            if(!document.body.classList.contains('access-granted')) flash();
+        }, 8000);
+
+        function verify() {
+            const input = document.getElementById('passkey').value;
+            if(input.toUpperCase() === KEY) {
+                flash();
+                document.getElementById('content-frame').src = URL;
+                setTimeout(() => {
+                    document.body.classList.add('access-granted');
+                }, 400);
+            } else {
+                flash();
+                document.getElementById('passkey').value = "";
+                document.getElementById('passkey').placeholder = "INVALID";
+                setTimeout(() => {
+                    document.getElementById('passkey').placeholder = "PASSKEY";
+                }, 2000);
+            }
+        }
+
+        document.getElementById('passkey').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verify();
+        });
+    </script>
+</body>
+</html>
