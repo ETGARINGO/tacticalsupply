@@ -10,9 +10,8 @@
             --pnp-blue: #0033ff;
             --pnp-red: #ff003c;
             --cyber-green: #00ff66;
-            --bg: #010206;
-            --map-line: rgba(0, 255, 102, 0.15);
-            --glow: 0 0 15px var(--cyber-green);
+            --bg: #01040a;
+            --glow: 0 0 15px rgba(0, 255, 102, 0.4);
         }
 
         body, html {
@@ -25,151 +24,182 @@
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* CRT Scanline Overlay */
-        body::before {
+        /* --- CRT SCANLINE EFFECT --- */
+        body::after {
             content: " ";
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 3px, 3px 100%;
             pointer-events: none; z-index: 1000;
         }
 
-        /* --- MAP & RADAR --- */
+        /* --- BACKGROUND RADAR SYSTEM --- */
         .map-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; overflow: hidden; opacity: 0.4;
+            z-index: 0; opacity: 0.3;
         }
 
         .radar-sweep {
             position: absolute; top: 50%; left: 50%;
-            width: 150vmax; height: 150vmax;
-            background: conic-gradient(from 0deg, transparent 0%, var(--cyber-green) 1%, transparent 10%);
+            width: 200vmax; height: 200vmax;
+            background: conic-gradient(from 0deg, transparent 0%, var(--cyber-green) 1%, transparent 15%);
             transform: translate(-50%, -50%);
-            animation: sweep 8s linear infinite;
+            animation: sweep 10s linear infinite;
         }
 
         @keyframes sweep { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        /* --- AUTH PANEL --- */
+        /* --- TACTICAL TERMINAL HUD --- */
         #auth-panel {
-            position: relative; z-index: 100; width: 420px;
-            background: rgba(2, 5, 12, 0.95);
-            border: 1px solid var(--cyber-green);
+            position: relative; z-index: 100; width: 450px;
+            background: rgba(2, 8, 20, 0.95);
+            border: 2px solid var(--cyber-green);
             padding: 40px; text-align: center;
-            box-shadow: 0 0 50px rgba(0, 255, 102, 0.05), inset 0 0 20px rgba(0, 255, 102, 0.05);
-            border-radius: 2px;
+            box-shadow: var(--glow), inset 0 0 20px rgba(0, 255, 102, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 5px;
         }
 
-        /* Glitch Title */
-        .title {
+        /* Profile & Scan Animation */
+        .profile-wrap {
+            position: relative; width: 180px; margin: 0 auto 20px;
+            border: 1px solid var(--cyber-green);
+            padding: 8px; background: rgba(0, 255, 102, 0.05);
+        }
+        .profile-img {
+            width: 100%; height: auto; display: block;
+            filter: grayscale(1) contrast(1.2) brightness(0.9);
+        }
+        .scanner {
+            position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--pnp-red); box-shadow: 0 0 15px var(--pnp-red);
+            animation: scanMove 3s ease-in-out infinite;
+        }
+        @keyframes scanMove { 0%, 100% { top: 0%; } 50% { top: 100%; } }
+
+        /* Typography */
+        .glitch-title {
             font-family: 'Orbitron', sans-serif; font-size: 2rem;
-            font-weight: 900; letter-spacing: 5px; margin: 25px 0 5px;
-            color: var(--cyber-green);
+            font-weight: 900; letter-spacing: 6px; color: var(--cyber-green);
             text-shadow: 2px 2px var(--pnp-red);
-            animation: glitch 3s infinite;
+            margin-bottom: 5px;
         }
 
-        @keyframes glitch {
-            0% { text-shadow: 2px 2px var(--pnp-red); }
-            2% { text-shadow: -3px -2px var(--pnp-blue), 3px 2px var(--pnp-red); }
-            4% { text-shadow: 0 0 transparent; }
-            100% { text-shadow: 2px 2px var(--pnp-red); }
+        .status-line {
+            font-size: 10px; color: var(--pnp-blue);
+            border-bottom: 1px solid var(--pnp-blue);
+            padding-bottom: 10px; margin-bottom: 25px;
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
-        /* Inputs & Buttons */
+        /* Input & Actions */
+        .input-group { position: relative; margin-bottom: 20px; }
         input {
             width: 100%; background: rgba(0, 255, 102, 0.05); border: 1px solid var(--cyber-green);
             padding: 15px; color: var(--cyber-green); font-family: 'JetBrains Mono';
-            box-sizing: border-box; font-size: 1rem; text-align: center; outline: none; margin-bottom: 20px;
-            transition: all 0.3s;
+            font-size: 1rem; text-align: center; outline: none; box-sizing: border-box;
+            transition: 0.3s;
         }
+        input:focus { background: rgba(0, 255, 102, 0.15); box-shadow: 0 0 20px rgba(0, 255, 102, 0.2); }
 
-        input:focus { box-shadow: 0 0 15px var(--cyber-green); background: rgba(0, 255, 102, 0.1); }
-
-        .btn-link {
+        .btn-sync {
             width: 100%; padding: 18px; background: var(--cyber-green);
             color: #000; font-family: 'Orbitron'; font-weight: 900;
-            border: none; cursor: pointer; transition: 0.4s;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            border: none; cursor: pointer; transition: 0.3s;
+            clip-path: polygon(5% 0, 100% 0, 95% 100%, 0% 100%);
+        }
+        .btn-sync:hover { background: #fff; transform: scale(1.02); box-shadow: 0 0 30px #fff; }
+
+        /* Live Terminal Console */
+        .console-log {
+            position: fixed; bottom: 20px; left: 20px; width: 320px; height: 100px;
+            font-size: 9px; color: var(--cyber-green); opacity: 0.6;
+            overflow: hidden; pointer-events: none; text-align: left;
         }
 
-        .btn-link:hover {
-            background: #fff; box-shadow: 0 0 30px #fff;
-            transform: scale(1.05);
+        /* Screen Flash */
+        #flash {
+            position: fixed; inset: 0; background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
+        }
+        @keyframes strike { 0% { opacity: 0; } 10% { opacity: 1; } 100% { opacity: 0; } }
+
+        #content-frame {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            border: none; display: none; z-index: 6000; background: #000;
         }
 
-        /* Bottom Live Log */
-        .terminal-log {
-            position: fixed; bottom: 20px; left: 20px; width: 300px;
-            height: 80px; font-size: 9px; color: var(--cyber-green);
-            overflow: hidden; opacity: 0.7; border-left: 2px solid var(--cyber-green);
-            padding-left: 10px;
-        }
-
-        /* Functional UI */
-        #lightning {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
-        }
-
-        @keyframes strike { 0% { opacity: 0; } 10% { opacity: 0.8; } 100% { opacity: 0; } }
+        .access-granted { animation: warpOut 0.8s forwards ease-in; }
+        @keyframes warpOut { to { transform: scale(2); filter: blur(50px); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="lightning"></div>
+    <div id="flash"></div>
 
     <div class="map-container">
         <div class="radar-sweep"></div>
-        <div class="ping" style="top: 30%; left: 40%;"></div>
-        <div class="ping" style="top: 70%; left: 60%;"></div>
+        <div style="position:absolute; top:30%; left:20%; width:10px; height:10px; background:var(--pnp-red); border-radius:50%; box-shadow: 0 0 10px var(--pnp-red); animation: pulse 2s infinite;"></div>
+        <div style="position:absolute; top:60%; left:80%; width:10px; height:10px; background:var(--pnp-red); border-radius:50%; box-shadow: 0 0 10px var(--pnp-red); animation: pulse 2s infinite 0.5s;"></div>
     </div>
 
-    <div class="terminal-log" id="log">
-        > INITIALIZING BOOT_SEQ...<br>
-        > KERNEL: OK<br>
-        > NETWORK: SECURE<br>
+    <div style="position:fixed; top:20px; left:20px; font-size:10px; color:var(--cyber-green); line-height:1.6;">
+        [ NODE_STATUS: ACTIVE ]<br>
+        [ LAT: <span id="lat">14.5995</span> ]<br>
+        [ LNG: <span id="lng">120.9842</span> ]<br>
+        [ CRYPTO: AES-256 ]
     </div>
 
     <div id="auth-panel">
-        <div style="border: 1px solid var(--cyber-green); padding: 5px; position: relative; overflow: hidden;">
-            <div style="position: absolute; width: 100%; height: 2px; background: var(--pnp-red); animation: scan 3s linear infinite;"></div>
-            <img src="d, TAMANG BIHIS.png" alt="ID Profile" style="width: 100%; filter: grayscale(1) contrast(1.5) brightness(0.8);">
+        <div class="profile-wrap">
+            <div class="scanner"></div>
+            <img src="d, TAMANG BIHIS.png" alt="SECURE_ID" class="profile-img">
         </div>
         
-        <div class="title">D'TAMANG BIHIS</div>
-        <div style="font-size: 9px; color: var(--pnp-blue); letter-spacing: 2px; margin-bottom: 20px;">PNP CYBER OVERWATCH // STRAT-COM</div>
+        <div class="glitch-title">D'TAMANG BIHIS</div>
+        <div class="status-line">Cyber Overwatch // Tactical Logistics</div>
 
-        <input type="password" id="passkey" placeholder="ENTER ACCESS KEY" autocomplete="off">
-        <button class="btn-link" onclick="verify()">INITIALIZE SYNC</button>
-        <p id="msg" style="font-size: 10px; color: var(--cyber-green); margin-top: 15px;">AWAITING CREDENTIALS...</p>
+        <div class="input-group">
+            <input type="password" id="passkey" placeholder="TERMINAL_ACCESS_KEY" autocomplete="off">
+        </div>
+        
+        <button class="btn-sync" onclick="verify()">INITIALIZE UPLINK</button>
+        
+        <p id="msg" style="font-size: 10px; color: var(--cyber-green); margin-top: 15px; letter-spacing: 2px;">SYSTEMS READY. AWAITING INPUT...</p>
     </div>
 
-    <iframe id="content-frame" style="position:fixed; top:0; left:0; width:100%; height:100%; border:none; display:none; z-index:6000;"></iframe>
+    <div class="console-log" id="terminal">
+        > BOOTING OS...<br>
+        > LOADING OVERWATCH MODULES...<br>
+        > SECURING PORT 8080...<br>
+    </div>
+
+    <iframe id="content-frame" src=""></iframe>
 
     <script>
         const SECRET = "WARRIOR";
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
-        // Dynamic Terminal Log
-        const logEntries = [
-            "SCANNING PACKETS...", "ENCRYPTING UPLINK...", "CHECKING PORT 8080...", 
-            "BYPASSING FIREWALL...", "ACCESSING DATABASE...", "SIGNAL STRENGTH: 98%"
+        // Terminal Log Emulator
+        const logs = [
+            "SCANNING NETWORK...", "PROXY DETECTED...", "ENCRYPTING DATA...", 
+            "SAT_LINK ESTABLISHED...", "BYPASSING FIREWALL...", "FETCHING COORDS..."
         ];
         setInterval(() => {
-            const log = document.getElementById('log');
-            const entry = logEntries[Math.floor(Math.random() * logEntries.length)];
-            log.innerHTML += `> ${entry}<br>`;
-            if (log.innerHTML.split('<br>').length > 6) {
-                log.innerHTML = log.innerHTML.split('<br>').slice(1).join('<br>');
-            }
+            const t = document.getElementById('terminal');
+            const entry = logs[Math.floor(Math.random() * logs.length)];
+            t.innerHTML += `> ${entry}<br>`;
+            if(t.innerHTML.split('<br>').length > 7) t.innerHTML = t.innerHTML.split('<br>').slice(1).join('<br>');
+            
+            document.getElementById('lat').innerText = (14.5 + Math.random() * 0.1).toFixed(4);
+            document.getElementById('lng').innerText = (120.9 + Math.random() * 0.1).toFixed(4);
         }, 2000);
 
-        function flash() {
-            const l = document.getElementById('lightning');
-            l.style.animation = 'strike 0.4s ease-out';
-            setTimeout(() => { l.style.animation = ''; }, 400);
+        function triggerFlash() {
+            const f = document.getElementById('flash');
+            f.style.animation = 'none';
+            void f.offsetWidth;
+            f.style.animation = 'strike 0.5s ease-out';
         }
 
         function verify() {
@@ -177,26 +207,29 @@
             const msg = document.getElementById('msg');
             
             if(val === SECRET) {
-                flash();
+                triggerFlash();
                 msg.innerHTML = "ACCESS GRANTED. SYNCING...";
                 msg.style.color = "#00ff66";
+                
                 setTimeout(() => {
-                    document.getElementById('auth-panel').style.transform = "scale(2)";
-                    document.getElementById('auth-panel').style.opacity = "0";
-                    document.getElementById('auth-panel').style.transition = "1s";
+                    document.getElementById('auth-panel').classList.add('access-granted');
                     const frame = document.getElementById('content-frame');
                     frame.src = SCRIPT_URL;
-                    setTimeout(() => { frame.style.display = "block"; }, 800);
+                    setTimeout(() => {
+                        frame.style.display = "block";
+                    }, 600);
                 }, 1000);
             } else {
-                flash();
-                msg.innerHTML = "!! UNAUTHORIZED ACCESS ATTEMPT !!";
+                triggerFlash();
+                msg.innerHTML = "!! ERROR: UNAUTHORIZED !!";
                 msg.style.color = "#ff003c";
                 document.getElementById('passkey').value = "";
             }
         }
 
-        document.getElementById('passkey').addEventListener('keypress', (e) => { if (e.key === 'Enter') verify(); });
+        document.getElementById('passkey').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verify();
+        });
     </script>
 </body>
 </html>
