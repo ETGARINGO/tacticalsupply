@@ -3,208 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WARZONE | D'TAMANG BIHIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>D'TAMANG BIHIS | CYBER OVERWATCH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pnp-blue: #0044ff;
+            --pnp-blue: #0033ff;
             --pnp-red: #ff003c;
-            --radar-green: #00ff66;
-            --terminal-bg: #02040a;
-            --glass: rgba(0, 68, 255, 0.07);
+            --cyber-green: #00ff66;
+            --bg: #010206;
+            --map-line: rgba(0, 255, 102, 0.15);
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--terminal-bg);
+            background-color: var(--bg);
             color: #fff;
-            font-family: 'Share Tech Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* --- DYNAMIC RADAR BACKGROUND --- */
-        #radar-container {
+        /* --- CYBER MAPPING BACKGROUND --- */
+        .map-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.4; pointer-events: none;
+            z-index: 0; overflow: hidden; opacity: 0.6;
         }
 
-        .radar-circle {
+        /* Radar Sweep */
+        .radar-sweep {
             position: absolute; top: 50%; left: 50%;
+            width: 150vmax; height: 150vmax;
+            background: conic-gradient(from 0deg, transparent 0%, var(--map-line) 2%, transparent 10%);
             transform: translate(-50%, -50%);
-            border: 1px solid var(--pnp-blue);
-            border-radius: 50%;
+            animation: sweep 6s linear infinite;
         }
 
-        .sweep {
+        @keyframes sweep { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* Map Grid Circles */
+        .radar-ring {
             position: absolute; top: 50%; left: 50%;
-            width: 40vw; height: 40vw;
-            background: conic-gradient(from 0deg, var(--pnp-blue) 0deg, transparent 90deg);
-            transform-origin: top left;
-            animation: rotate 4s linear infinite;
-            opacity: 0.3;
+            border: 1px solid var(--map-line);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
         }
 
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* --- MAP COORDS LAYER --- */
-        .map-overlay {
-            position: fixed; width: 100%; height: 100%;
-            background-image: radial-gradient(circle, transparent 20%, var(--terminal-bg) 80%);
-            z-index: 1;
-        }
-
-        .map-spot {
-            position: absolute; width: 10px; height: 10px;
+        /* Pinging Locations */
+        .ping {
+            position: absolute; width: 8px; height: 8px;
             background: var(--pnp-red); border-radius: 50%;
-            box-shadow: 0 0 15px var(--pnp-red);
-            animation: pulse-spot 1.5s infinite;
+            box-shadow: 0 0 10px var(--pnp-red);
+            animation: pulse 2s ease-out infinite;
         }
 
-        @keyframes pulse-spot { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
 
-        /* --- CENTRAL HUD --- */
+        /* --- LIGHTNING/EMP EFFECT --- */
+        #lightning {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
+        }
+
+        @keyframes strike {
+            0% { opacity: 0; } 5% { opacity: 1; } 15% { opacity: 0.8; } 25% { opacity: 0; }
+        }
+
+        /* --- SIDE DATA FEEDS --- */
+        .data-feed {
+            position: fixed; top: 20px; font-size: 10px; color: var(--cyber-green);
+            z-index: 10; text-transform: uppercase; line-height: 1.5;
+        }
+        .left-feed { left: 20px; }
+        .right-feed { right: 20px; text-align: right; }
+
+        /* --- CENTRAL TACTICAL HUD --- */
         #auth-panel {
-            position: relative; z-index: 100; width: 550px;
-            background: rgba(1, 3, 10, 0.9);
-            border: 1px solid rgba(0, 68, 255, 0.5);
-            padding: 30px; text-align: center;
-            box-shadow: inset 0 0 30px rgba(0, 68, 255, 0.2);
+            position: relative; z-index: 100; width: 480px;
+            background: rgba(5, 7, 15, 0.9);
+            border: 1px solid var(--cyber-green);
+            padding: 40px; text-align: center;
+            box-shadow: 0 0 40px rgba(0, 255, 102, 0.1);
             backdrop-filter: blur(10px);
+            border-radius: 4px;
         }
 
         /* Profile Area */
-        .hvt-profile {
-            position: relative; width: 200px; margin: 0 auto 15px;
-            border: 2px solid #fff; padding: 5px; background: #000;
+        .profile-container {
+            position: relative; width: 200px; margin: 0 auto;
+            border: 1px solid var(--cyber-green); padding: 5px;
         }
-        .hvt-profile img {
-            width: 100%; display: block; filter: contrast(1.1) brightness(1.1);
+        .profile-img {
+            width: 100%; height: auto; display: block;
+            filter: sepia(100%) hue-rotate(90deg) brightness(1.2) contrast(1.1);
         }
-        .hvt-label {
-            position: absolute; top: -10px; left: -10px;
-            background: var(--pnp-red); color: white; font-size: 10px;
-            padding: 2px 8px; font-weight: bold;
+        .scan-bar {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--pnp-red); box-shadow: 0 0 15px var(--pnp-red);
+            animation: scan 4s linear infinite;
         }
-
-        /* Diagnostic Grid */
-        .diag-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;
-        }
-        .diag-box {
-            border: 1px solid var(--pnp-blue); padding: 5px; font-size: 9px;
-            text-align: left; background: var(--glass);
-        }
-        .diag-box b { color: var(--pnp-blue); display: block; margin-bottom: 2px; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
         .title {
-            font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900;
-            letter-spacing: 8px; margin: 10px 0; color: #fff;
-            text-shadow: 0 0 15px var(--pnp-blue);
+            font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+            font-weight: 900; letter-spacing: 4px; margin: 25px 0 5px;
+            color: var(--cyber-green);
         }
 
-        /* Controls */
-        .input-area { margin: 25px 0; }
+        .system-status {
+            font-size: 10px; color: var(--pnp-blue); margin-bottom: 25px;
+            border-top: 1px solid var(--pnp-blue); padding-top: 5px;
+        }
+
+        /* Interactive Elements */
         input {
-            width: 70%; background: transparent; border: 1px solid var(--pnp-blue);
-            padding: 12px; color: #fff; text-align: center; font-size: 1.2rem;
-            letter-spacing: 5px; outline: none; transition: 0.3s;
+            width: 85%; background: transparent; border: 1px solid var(--cyber-green);
+            padding: 15px; color: var(--cyber-green); font-family: 'JetBrains Mono';
+            font-size: 1.1rem; text-align: center; outline: none; margin-bottom: 20px;
         }
-        input:focus { border-color: var(--radar-green); box-shadow: 0 0 10px var(--radar-green); }
 
-        .btn-strike {
-            width: 75%; padding: 15px; background: var(--pnp-blue); color: white;
-            border: none; font-family: 'Orbitron'; font-weight: bold;
-            cursor: pointer; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
-            transition: 0.3s;
+        .btn-link {
+            width: 90%; padding: 18px; background: var(--cyber-green);
+            color: #000; font-family: 'Orbitron'; font-weight: 900;
+            border: none; cursor: pointer; transition: 0.3s;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
         }
-        .btn-strike:hover { background: var(--radar-green); color: #000; box-shadow: 0 0 20px var(--radar-green); }
+
+        .btn-link:hover {
+            background: #fff; box-shadow: 0 0 30px #fff;
+            transform: translateY(-2px);
+        }
 
         #content-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            border: none; display: none; z-index: 1000;
+            border: none; display: none; z-index: 6000;
         }
 
-        /* --- SCANLINE EFFECT --- */
-        body::after {
-            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%; z-index: 500; pointer-events: none;
-        }
+        .access-granted { animation: exit 1s forwards; }
+        @keyframes exit { to { transform: scale(1.5); opacity: 0; filter: blur(30px); } }
     </style>
 </head>
 <body>
 
-    <div class="map-overlay"></div>
-    <div id="radar-container">
-        <div class="sweep"></div>
-        <div class="radar-circle" style="width: 200px; height: 200px;"></div>
-        <div class="radar-circle" style="width: 400px; height: 400px;"></div>
-        <div class="radar-circle" style="width: 600px; height: 600px;"></div>
-        <div class="map-spot" style="top:30%; left:20%;"></div>
-        <div class="map-spot" style="top:70%; left:80%;"></div>
-        <div class="map-spot" style="top:45%; left:65%;"></div>
+    <div id="lightning"></div>
+
+    <div class="map-container">
+        <div class="radar-sweep"></div>
+        <div class="radar-ring" style="width: 200px; height: 200px;"></div>
+        <div class="radar-ring" style="width: 500px; height: 500px;"></div>
+        <div class="radar-ring" style="width: 800px; height: 800px;"></div>
+        
+        <div class="ping" style="top: 20%; left: 30%;"></div>
+        <div class="ping" style="top: 65%; left: 80%;"></div>
+        <div class="ping" style="top: 40%; left: 15%;"></div>
+    </div>
+
+    <div class="data-feed left-feed">
+        UPLINK: ACTIVE<br>
+        COORD: <span id="lat-stream">14.5995</span><br>
+        SAT: MNL-OVERWATCH-01<br>
+        SIGNAL: 128-BIT-ENC
+    </div>
+    <div class="data-feed right-feed">
+        SYSTEM: PNP_TACTICAL_OS<br>
+        USER: AUTHORIZED_ONLY<br>
+        THREAT_LVL: <span style="color:var(--pnp-red)">STRICT</span><br>
+        TEMP: 24.2°C
     </div>
 
     <div id="auth-panel">
-        <div class="hvt-profile">
-            <div class="hvt-label">HVT-ACTIVE</div>
-            <img src="d, TAMANG BIHIS.png" alt="Tactical Target">
+        <div class="profile-container">
+            <div class="scan-bar"></div>
+            <img src="d, TAMANG BIHIS.png" alt="ID Profile" class="profile-img">
         </div>
         
         <div class="title">D'TAMANG BIHIS</div>
-        
-        <div class="diag-grid">
-            <div class="diag-box"><b>LOCATION</b><span id="coord-lat">14.5995</span>N</div>
-            <div class="diag-box"><b>ALTITUDE</b><span id="alt-val">124</span>M</div>
-            <div class="diag-box"><b>SIGNAL</b><span style="color:var(--radar-green)">SECURE</span></div>
-        </div>
+        <div class="system-status">SECURE LOGISTICS OVERRIDE // PNP-TERMINAL-9X</div>
 
-        <div class="input-area">
-            <input type="password" id="passkey" placeholder="PASSKEY">
-        </div>
+        <input type="password" id="passkey" placeholder="TERMINAL ACCESS KEY">
         
-        <button class="btn-strike" onclick="initiate()">CONFIRM IDENTITY</button>
-        <p id="status-text" style="font-size: 10px; margin-top: 15px; color: var(--pnp-blue);">READY FOR COMMAND UPLINK...</p>
+        <button class="btn-link" onclick="verify()">INITIALIZE SYNC</button>
+        
+        <p id="msg" style="font-size: 0.6rem; color: var(--cyber-green); margin-top: 15px; letter-spacing: 2px;">READY FOR UPLINK...</p>
     </div>
 
     <iframe id="content-frame" src=""></iframe>
 
     <script>
-        const ACCESS_KEY = "WARRIOR";
+        const SECRET = "WARRIOR";
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
-        // Dynamic Telemetry
+        // Update Live Data
         setInterval(() => {
-            document.getElementById('coord-lat').innerText = (14.5 + Math.random() * 0.01).toFixed(4);
-            document.getElementById('alt-val').innerText = Math.floor(120 + Math.random() * 10);
-        }, 2000);
+            document.getElementById('lat-stream').innerText = (14.5 + Math.random() * 0.01).toFixed(4);
+        }, 1500);
 
-        function initiate() {
-            const input = document.getElementById('passkey').value.toUpperCase();
-            const status = document.getElementById('status-text');
+        function flash() {
+            const l = document.getElementById('lightning');
+            l.style.animation = 'none';
+            void l.offsetWidth;
+            l.style.animation = 'strike 0.6s ease-out';
+        }
+
+        function verify() {
+            const val = document.getElementById('passkey').value.toUpperCase();
+            const msg = document.getElementById('msg');
             
-            if(input === ACCESS_KEY) {
-                status.innerText = "IDENTITY CONFIRMED. REDIRECTING...";
-                status.style.color = "#00ff66";
-                document.getElementById('auth-panel').style.opacity = "0.3";
+            if(val === SECRET) {
+                flash();
+                msg.innerHTML = "SYNC SUCCESSFUL. DEPLOYING INTERFACE...";
+                msg.style.color = "#00ff66";
                 
                 setTimeout(() => {
-                    document.getElementById('auth-panel').style.display = "none";
+                    document.getElementById('auth-panel').classList.add('access-granted');
                     const frame = document.getElementById('content-frame');
                     frame.src = SCRIPT_URL;
-                    frame.style.display = "block";
+                    setTimeout(() => {
+                        frame.style.display = "block";
+                    }, 600);
                 }, 1000);
             } else {
-                status.innerText = "ACCESS DENIED. WRONG PASSKEY.";
-                status.style.color = "#ff003c";
+                flash();
+                msg.innerHTML = "ERR: UNAUTHORIZED USER DETECTED.";
+                msg.style.color = "#ff003c";
                 document.getElementById('passkey').value = "";
             }
         }
 
-        document.getElementById('passkey').addEventListener('keypress', (e) => { if (e.key === 'Enter') initiate(); });
+        document.getElementById('passkey').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verify();
+        });
     </script>
 </body>
 </html>
