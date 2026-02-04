@@ -3,198 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PNP | D'TAMANG BIHIS TACTICAL</title>
+    <title>WARZONE | D'TAMANG BIHIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
+            --neon-green: #00ff66;
             --pnp-blue: #003399;
-            --pnp-red: #ff0000;
-            --pnp-gold: #ffd700;
-            --bg: #03040a;
+            --alert-red: #ff003c;
+            --dark-bg: #010203;
+            --glass: rgba(0, 255, 102, 0.05);
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--bg);
-            color: #fff;
-            font-family: 'Orbitron', sans-serif; /* High-tech font */
+            background-color: var(--dark-bg);
+            color: var(--neon-green);
+            font-family: 'JetBrains Mono', monospace;
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* Lightning Strike */
+        /* Tactical Map Background Animation */
+        #map-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(circle at center, transparent, var(--dark-bg)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.3; z-index: -2;
+        }
+
+        #coords-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 102, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.1) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: -1; animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            from { background-position: 0 0; }
+            to { background-position: 100px 100px; }
+        }
+
+        /* HUD Live Data */
+        .hud-data {
+            position: absolute; padding: 10px; font-size: 10px; text-transform: uppercase;
+            letter-spacing: 2px; border: 1px solid var(--neon-green); background: rgba(0,0,0,0.8);
+        }
+        .top-left { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        /* Lightning / EMP Strike */
         #lightning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; opacity: 0; z-index: 3000; pointer-events: none;
+            background: #fff; opacity: 0; z-index: 5000; pointer-events: none;
         }
 
-        @keyframes strike {
-            0% { opacity: 0; } 10% { opacity: 0.9; } 15% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0; }
+        @keyframes emp-strike {
+            0% { opacity: 0; } 5% { opacity: 0.8; } 10% { opacity: 0.1; } 15% { opacity: 1; } 100% { opacity: 0; }
         }
 
-        /* Moving Supply Paraphernalia Reel (Left & Right Background) */
-        .supply-reel {
-            position: fixed; top: 0; width: 100px; height: 100%;
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; flex-direction: column; align-items: center;
-            padding-top: 20px; gap: 40px; font-size: 0.6rem; color: var(--pnp-blue);
-            z-index: 1; opacity: 0.5;
-        }
-        .left-reel { left: 20px; }
-        .right-reel { right: 20px; }
-
-        .item-node {
-            width: 50px; height: 50px; border: 1px solid var(--pnp-blue);
-            display: flex; align-items: center; justify-content: center;
-            animation: pulse-blue 2s infinite;
-        }
-
-        @keyframes pulse-blue {
-            0% { box-shadow: 0 0 0px var(--pnp-blue); }
-            50% { box-shadow: 0 0 10px var(--pnp-blue); }
-            100% { box-shadow: 0 0 0px var(--pnp-blue); }
-        }
-
-        /* Central Tactical HUD */
+        /* Central Login Terminal */
         #auth-panel {
-            position: relative; z-index: 100; width: 450px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--pnp-blue);
+            position: relative; z-index: 100; width: 500px;
+            background: rgba(0, 10, 5, 0.95);
+            border: 1px solid var(--neon-green);
             padding: 40px; text-align: center;
-            box-shadow: 0 0 30px rgba(0, 51, 153, 0.4);
-            clip-path: polygon(0 15%, 15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%);
+            box-shadow: 0 0 50px rgba(0, 255, 102, 0.15);
+            clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%);
         }
 
-        .profile-container {
-            position: relative; width: 180px; margin: 0 auto;
+        /* Dynamic Image Scanner */
+        .profile-wrap {
+            position: relative; width: 220px; margin: 0 auto 20px;
+            border: 1px solid rgba(0, 255, 102, 0.3); padding: 5px;
         }
 
         .profile-img {
             width: 100%; height: auto;
-            filter: drop-shadow(0 0 10px var(--pnp-blue));
-            border-radius: 10px;
+            filter: sepia(1) hue-rotate(90deg) brightness(1.2);
+            mix-blend-mode: screen;
         }
 
-        /* Scanner Bar Animation */
-        .scanner-bar {
-            position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--pnp-red); box-shadow: 0 0 15px var(--pnp-red);
-            animation: scan-move 3s linear infinite;
+        .laser {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green);
+            animation: laserScan 4s ease-in-out infinite;
         }
 
-        @keyframes scan-move {
-            0% { top: 0; } 50% { top: 100%; } 100% { top: 0; }
+        @keyframes laserScan {
+            0%, 100% { top: 0; } 50% { top: 100%; }
+        }
+
+        /* Equipment Nodes */
+        .eq-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;
+        }
+        .eq-item {
+            font-size: 10px; border: 1px solid rgba(0, 255, 102, 0.2);
+            padding: 8px; background: var(--glass);
         }
 
         .title {
-            font-size: 1.8rem; letter-spacing: 5px; margin: 15px 0 5px;
-            background: linear-gradient(to bottom, #fff, var(--pnp-blue));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem; font-weight: 900; margin-bottom: 5px;
+            color: #fff; text-shadow: 0 0 10px var(--neon-green);
         }
 
-        .status-badge {
-            background: var(--pnp-blue); color: #fff; font-size: 0.6rem;
-            padding: 3px 10px; display: inline-block; letter-spacing: 2px;
-            border: 1px solid var(--pnp-gold); margin-bottom: 20px;
-        }
-
-        /* Tactical Input */
+        /* Cyber Inputs */
+        .input-wrap { position: relative; width: 80%; margin: 0 auto; }
         input {
-            width: 80%; background: #000; border: 1px solid var(--pnp-blue);
-            padding: 15px; color: #fff; text-align: center; font-family: monospace;
-            outline: none; margin-bottom: 15px; border-radius: 5px;
+            width: 100%; background: #000; border: none; border-bottom: 2px solid var(--neon-green);
+            padding: 15px; color: var(--neon-green); font-family: 'JetBrains Mono', monospace;
+            text-align: center; outline: none; font-size: 1.1rem;
         }
 
-        .btn-pnp {
-            width: 85%; padding: 15px; background: var(--pnp-blue);
-            color: #fff; border: 1px solid var(--pnp-gold); font-weight: bold;
-            cursor: pointer; text-transform: uppercase; transition: 0.3s;
+        .btn-warzone {
+            width: 80%; margin-top: 25px; padding: 15px;
+            background: var(--neon-green); color: #000; font-weight: 900;
+            border: none; cursor: pointer; text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+            transition: 0.3s;
         }
 
-        .btn-pnp:hover {
-            background: var(--pnp-red); box-shadow: 0 0 15px var(--pnp-red);
+        .btn-warzone:hover {
+            background: #fff; box-shadow: 0 0 20px #fff;
         }
 
         #content-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            border: none; display: none; z-index: 5000;
+            border: none; display: none; z-index: 6000;
         }
 
-        .hidden { opacity: 0; pointer-events: none; transform: translateY(50px); }
+        .hidden { opacity: 0; filter: blur(20px); pointer-events: none; transform: scale(1.5); transition: 1s; }
     </style>
 </head>
 <body>
 
     <div id="lightning"></div>
+    <div id="map-bg"></div>
+    <div id="coords-layer"></div>
 
-    <div class="supply-reel left-reel">
-        <div class="item-node">VEST</div>
-        <div class="item-node">HELM</div>
-        <div class="item-node">GEAR</div>
-        <div class="item-node">MED</div>
-        <div class="item-node">AMMO</div>
+    <div class="hud-data top-left">
+        LOC: <span id="lat">14.5995</span> N | <span id="lng">120.9842</span> E<br>
+        STATUS: COMBAT READY<br>
+        SIGNAL: ENCRYPTED
     </div>
-
-    <div class="supply-reel right-reel">
-        <div class="item-node">OPS</div>
-        <div class="item-node">RADAR</div>
-        <div class="item-node">COMMS</div>
-        <div class="item-node">GPS</div>
-        <div class="item-node">IDENT</div>
+    <div class="hud-data bottom-right">
+        BATTERY: 98%<br>
+        TEMP: 32°C<br>
+        v.2026.TAC
     </div>
 
     <div id="auth-panel">
-        <div class="profile-container">
-            <div class="scanner-bar"></div>
-            <img src="d, TAMANG BIHIS.png" alt="PNP Supply" class="profile-img">
+        <div class="profile-wrap">
+            <div class="laser"></div>
+            <img src="d, TAMANG BIHIS.png" alt="Tactical Unit" class="profile-img">
         </div>
         
         <div class="title">D'TAMANG BIHIS</div>
-        <div class="status-badge">SUPPLY & PARAPHERNALIA COMMAND</div>
+        <div style="font-size: 0.6rem; letter-spacing: 5px; margin-bottom: 20px;">WARZONE LOGISTICS & SUPPLY</div>
 
-        <input type="password" id="passkey" placeholder="OFFICER PASSKEY">
-        <button class="btn-pnp" onclick="verify()">AUTHORIZE ACCESS</button>
+        <div class="eq-grid">
+            <div class="eq-item">HELMET: NV-GOGGLE [ON]</div>
+            <div class="eq-item">VEST: LEVEL III [ACTIVE]</div>
+            <div class="eq-item">COMMS: KY-57 [SECURE]</div>
+            <div class="eq-item">DROID: RECON [LINKED]</div>
+        </div>
+
+        <div class="input-wrap">
+            <input type="password" id="passkey" placeholder="IDENTIFICATION KEY">
+        </div>
         
-        <p id="msg" style="font-size: 0.6rem; color: var(--pnp-gold); margin-top: 15px;">AWAITING SECURITY CLEARANCE...</p>
+        <button class="btn-warzone" onclick="authorize()">Initialize Override</button>
+        <p id="msg" style="font-size: 0.7rem; margin-top: 15px; color: var(--neon-green);">WAITING FOR COMMAND...</p>
     </div>
 
     <iframe id="content-frame" src=""></iframe>
 
     <script>
-        const SECRET = "WARRIOR";
+        const ACCESS_KEY = "WARRIOR";
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOC3b-JTJeVLkyBKVwAsKdqz9XzbmEzp6ICAVM6ctxHGKs11JQ11C5G654aUdBebSm/exec";
 
-        function flash() {
+        // Dynamic coordinate simulation
+        setInterval(() => {
+            document.getElementById('lat').innerText = (14.5 + Math.random() * 0.1).toFixed(4);
+            document.getElementById('lng').innerText = (120.9 + Math.random() * 0.1).toFixed(4);
+        }, 3000);
+
+        function triggerEMP() {
             const l = document.getElementById('lightning');
             l.style.animation = 'none';
             void l.offsetWidth;
-            l.style.animation = 'strike 0.5s linear';
+            l.style.animation = 'emp-strike 0.6s linear';
         }
 
-        function verify() {
+        function authorize() {
             const val = document.getElementById('passkey').value.toUpperCase();
             const msg = document.getElementById('msg');
             
-            if(val === SECRET) {
-                flash();
-                msg.innerHTML = "CREDENTIALS VERIFIED. LOADING LOGISTICS DATA...";
-                msg.style.color = "#00ff00";
+            if(val === ACCESS_KEY) {
+                triggerEMP();
+                msg.innerHTML = "SYSTEM OVERRIDE SUCCESSFUL. DEPLOYING LOGISTICS...";
+                msg.style.color = "#00ff66";
                 
                 setTimeout(() => {
                     document.getElementById('auth-panel').classList.add('hidden');
                     const frame = document.getElementById('content-frame');
                     frame.src = SCRIPT_URL;
                     frame.style.display = "block";
-                }, 1000);
+                }, 1200);
             } else {
-                flash();
-                msg.innerHTML = "UNAUTHORIZED ATTEMPT. INCIDENT REPORT FILED.";
-                msg.style.color = "#ff0000";
+                triggerEMP();
+                msg.innerHTML = "ERROR: ACCESS KEY NOT RECOGNIZED.";
+                msg.style.color = "#ff003c";
                 document.getElementById('passkey').value = "";
             }
         }
 
         document.getElementById('passkey').addEventListener('keypress', (e) => {
-            if
+            if (e.key === 'Enter') authorize();
+        });
+    </script>
+</body>
+</html>
